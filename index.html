@@ -1,0 +1,1658 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>寶寶成長全紀錄</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Noto+Sans+TC:wght@400;500;700&display=swap');
+:root{
+  --cream:#FFF8F0;--peach:#FFD6B3;--coral:#FF7D5C;--coral-dark:#E05A3A;
+  --warn:#F2C94C;--warn-dark:#C49A1A;
+  --red-soft:#FFDAD5;--red:#E05A3A;
+  --green-soft:#D6EDCF;--green:#4A9E3F;
+  --blue:#5BAAD4;--blue-soft:#D6EEFB;
+  --purple:#7B5EA7;--purple-soft:#EDE4F8;
+  --teal:#3AAFA9;--teal-soft:#D4F0EE;
+  --text:#2D2013;--text-soft:#7A6555;
+  --card:#FFFFFF;--border:#EDE3DA;
+  --radius:18px;--radius-sm:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans TC','Nunito',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;padding-bottom:80px;}
+
+/* HEADER */
+header{background:linear-gradient(135deg,#FFD6B3 0%,#FFB885 60%,#FF9255 100%);padding:22px 20px 38px;text-align:center;position:relative;overflow:hidden;}
+header::before{content:'';position:absolute;bottom:-20px;left:-10%;right:-10%;height:42px;background:var(--cream);border-radius:50% 50% 0 0;}
+.hdr-emoji{font-size:2.4rem;display:block;margin-bottom:4px;}
+header h1{font-family:'Nunito',sans-serif;font-size:1.5rem;font-weight:900;color:var(--text);}
+header p{font-size:0.82rem;color:var(--coral-dark);margin-top:3px;font-weight:600;}
+
+/* TAB BAR */
+.tab-bar{position:sticky;top:0;z-index:100;background:var(--cream);border-bottom:2px solid var(--border);display:flex;overflow-x:auto;scrollbar-width:none;padding:0 8px;}
+.tab-bar::-webkit-scrollbar{display:none;}
+.tab-btn{flex-shrink:0;padding:12px 16px 10px;border:none;background:none;font-family:inherit;font-size:0.82rem;font-weight:700;color:var(--text-soft);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .18s;white-space:nowrap;}
+.tab-btn.active{color:var(--coral);border-bottom-color:var(--coral);}
+.tab-btn:hover:not(.active){color:var(--text);}
+
+/* PAGES */
+.page{display:none;max-width:720px;margin:0 auto;padding:22px 14px 0;}
+.page.active{display:block;}
+
+/* SECTION TITLE */
+.sec-title{font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:800;color:var(--text-soft);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.sec-title::after{content:'';flex:1;height:1.5px;background:var(--border);border-radius:2px;}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:22px;}
+.stat-card{background:var(--card);border-radius:var(--radius-sm);padding:13px 8px;text-align:center;border:1.5px solid var(--border);}
+.stat-num{font-family:'Nunito',sans-serif;font-size:1.6rem;font-weight:800;line-height:1;}
+.stat-lbl{font-size:.7rem;font-weight:600;color:var(--text-soft);margin-top:3px;}
+.stat-safe .stat-num{color:var(--green);}
+.stat-unsafe .stat-num{color:var(--red);}
+.stat-pending .stat-num{color:var(--warn-dark);}
+
+/* ADD FORM */
+.add-card{background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:0 2px 12px rgba(255,125,92,.08);border:1.5px solid var(--border);margin-bottom:24px;}
+.form-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:11px;}
+.form-group{display:flex;flex-direction:column;gap:4px;flex:1;min-width:120px;}
+.form-group label{font-size:.75rem;font-weight:700;color:var(--text-soft);}
+.form-group input,.form-group select,.form-group textarea{border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:8px 11px;font-size:.88rem;font-family:inherit;color:var(--text);background:var(--cream);outline:none;transition:border .2s;}
+.form-group textarea{resize:vertical;min-height:54px;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--coral);background:#fff;}
+.chips-lbl{font-size:.75rem;font-weight:700;color:var(--text-soft);margin-bottom:6px;display:block;}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:13px;}
+.chip{background:var(--peach);color:var(--coral-dark);border:1.5px solid var(--peach);border-radius:20px;padding:4px 12px;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit;}
+.chip:hover{background:var(--coral);color:#fff;border-color:var(--coral);}
+.status-toggle{display:flex;gap:7px;margin-bottom:13px;}
+.status-btn{flex:1;padding:9px 6px;border-radius:var(--radius-sm);border:2px solid var(--border);font-size:.84rem;font-weight:700;cursor:pointer;font-family:inherit;background:var(--cream);color:var(--text-soft);transition:all .18s;}
+.status-btn.active-safe{background:var(--green-soft);border-color:var(--green);color:var(--green);}
+.status-btn.active-unsafe{background:var(--red-soft);border-color:var(--red);color:var(--red);}
+.status-btn.active-pending{background:#FFF8D6;border-color:var(--warn-dark);color:var(--warn-dark);}
+.btn-add{width:100%;padding:11px;background:var(--coral);color:#fff;border:none;border-radius:var(--radius-sm);font-size:.95rem;font-weight:800;cursor:pointer;font-family:inherit;transition:background .18s;}
+.btn-add:hover{background:var(--coral-dark);}
+
+/* CALENDAR */
+.cal-card{background:var(--card);border-radius:var(--radius);border:1.5px solid var(--border);box-shadow:0 2px 12px rgba(255,125,92,.07);margin-bottom:24px;overflow:hidden;}
+.cal-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 11px;border-bottom:1.5px solid var(--border);}
+.cal-title{font-family:'Nunito',sans-serif;font-size:1.05rem;font-weight:800;color:var(--text);}
+.cal-arrow{background:none;border:1.5px solid var(--border);border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:1rem;color:var(--text-soft);display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.cal-arrow:hover{background:var(--peach);border-color:var(--coral);color:var(--coral-dark);}
+.cal-wdays{display:grid;grid-template-columns:repeat(7,1fr);background:var(--cream);border-bottom:1px solid var(--border);}
+.cal-wd{text-align:center;padding:7px 2px;font-size:.7rem;font-weight:700;color:var(--text-soft);}
+.cal-wd:first-child{color:var(--red);}
+.cal-wd:last-child{color:var(--blue);}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);}
+.cal-cell{min-height:78px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:5px 4px;position:relative;transition:background .12s;}
+.cal-cell:nth-child(7n){border-right:none;}
+.cal-cell.empty{background:#FDFAF7;}
+.cal-cell.today{background:#FFF3E8;}
+.cal-cell.has-rec{cursor:pointer;}
+.cal-cell.has-rec:hover{background:#FFF0E6;}
+.cal-day-num{font-size:.76rem;font-weight:700;color:var(--text-soft);margin-bottom:3px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;}
+.cal-cell.today .cal-day-num{background:var(--coral);color:#fff;border-radius:50%;}
+.cal-cell.sun .cal-day-num{color:var(--red);}
+.cal-cell.sat .cal-day-num{color:var(--blue);}
+.cal-cell.today .cal-day-num{color:#fff !important;}
+.cal-tags{display:flex;flex-direction:column;gap:2px;}
+.cal-tag{display:flex;align-items:center;gap:2px;font-size:.63rem;font-weight:600;border-radius:4px;padding:2px 3px;white-space:nowrap;overflow:hidden;}
+.cal-tag.t-safe{background:var(--green-soft);color:var(--green);}
+.cal-tag.t-unsafe{background:var(--red-soft);color:var(--red);}
+.cal-tag.t-pending{background:#FFF8D6;color:var(--warn-dark);}
+.cal-more{font-size:.6rem;color:var(--text-soft);font-weight:600;padding:1px 3px;}
+.day-detail{display:none;margin-bottom:20px;background:var(--card);border-radius:var(--radius);border:1.5px solid var(--border);padding:16px 18px;animation:fdIn .2s ease;}
+.day-detail.open{display:block;}
+.det-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px;}
+.det-date{font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:800;color:var(--coral-dark);}
+.det-close{background:none;border:none;font-size:1.1rem;cursor:pointer;color:var(--text-soft);}
+.det-list{display:flex;flex-direction:column;gap:9px;}
+.det-item{display:flex;align-items:center;gap:11px;padding:9px 13px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--cream);}
+.det-emoji{font-size:1.25rem;flex-shrink:0;}
+.det-info{flex:1;min-width:0;}
+.det-name{font-weight:700;font-size:.92rem;}
+.det-sub{font-size:.72rem;color:var(--text-soft);margin-top:2px;}
+.det-note{font-size:.75rem;color:var(--text-soft);font-style:italic;margin-top:2px;}
+.det-badge{padding:3px 9px;border-radius:20px;font-size:.72rem;font-weight:800;flex-shrink:0;}
+.badge-safe{background:var(--green-soft);color:var(--green);}
+.badge-unsafe{background:var(--red-soft);color:var(--red);}
+.badge-pending{background:#FFF8D6;color:var(--warn-dark);}
+.btn-del{width:26px;height:26px;border-radius:50%;border:none;cursor:pointer;font-size:.8rem;display:flex;align-items:center;justify-content:center;background:#f5f0eb;color:var(--text-soft);transition:all .15s;flex-shrink:0;}
+.btn-del:hover{background:var(--red-soft);color:var(--red);}
+
+/* ===== PAGE 2: SUPPLEMENTS ===== */
+.age-selector{display:flex;overflow-x:auto;gap:8px;padding-bottom:6px;margin-bottom:20px;scrollbar-width:none;}
+.age-selector::-webkit-scrollbar{display:none;}
+.age-pill{flex-shrink:0;padding:7px 16px;border-radius:20px;border:1.5px solid var(--border);font-size:.8rem;font-weight:700;cursor:pointer;font-family:inherit;background:var(--card);color:var(--text-soft);transition:all .15s;white-space:nowrap;}
+.age-pill.active{background:var(--coral);border-color:var(--coral);color:#fff;}
+
+.supp-grid{display:grid;gap:13px;}
+.supp-card{background:var(--card);border-radius:var(--radius);border:1.5px solid var(--border);overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04);cursor:pointer;transition:box-shadow .15s;}
+.supp-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.1);}
+.supp-head{display:flex;align-items:center;gap:13px;padding:14px 16px;}
+.supp-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;}
+.supp-main{flex:1;}
+.supp-name{font-weight:800;font-size:.97rem;}
+.supp-dose{font-size:.76rem;color:var(--text-soft);margin-top:2px;}
+.supp-badge{font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:10px;flex-shrink:0;}
+.priority-high{background:#FFE9E3;color:var(--red);}
+.priority-med{background:#FFF8D6;color:var(--warn-dark);}
+.priority-low{background:var(--green-soft);color:var(--green);}
+.supp-expand{display:none;padding:0 16px 14px;border-top:1px dashed var(--border);}
+.supp-expand.open{display:block;}
+.supp-why{font-size:.83rem;color:var(--text);line-height:1.65;margin-top:10px;}
+.supp-why h4{font-size:.8rem;font-weight:700;color:var(--coral-dark);margin-bottom:4px;}
+.supp-source{font-size:.7rem;color:var(--text-soft);margin-top:8px;font-style:italic;}
+.chevron{transition:transform .2s;font-size:.8rem;color:var(--text-soft);}
+.supp-card.open .chevron{transform:rotate(180deg);}
+
+/* ===== PAGE 3: DEVELOPMENT ===== */
+.dev-age-sel{display:flex;overflow-x:auto;gap:8px;padding-bottom:6px;margin-bottom:20px;scrollbar-width:none;}
+.dev-age-sel::-webkit-scrollbar{display:none;}
+
+.dev-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
+.dev-tab{padding:7px 14px;border-radius:20px;border:1.5px solid var(--border);font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;background:var(--card);color:var(--text-soft);transition:all .15s;}
+.dev-tab.active{color:#fff;}
+.dev-tab[data-cat="brain"].active{background:var(--purple);border-color:var(--purple);}
+.dev-tab[data-cat="motor"].active{background:var(--teal);border-color:var(--teal);}
+.dev-tab[data-cat="lang"].active{background:var(--blue);border-color:var(--blue);}
+.dev-tab[data-cat="sport"].active{background:var(--green);border-color:var(--green);}
+
+.dev-section{display:none;}
+.dev-section.active{display:block;}
+
+.dev-grid{display:grid;gap:11px;}
+.dev-card{background:var(--card);border-radius:var(--radius);border:1.5px solid var(--border);padding:15px 16px;box-shadow:0 1px 6px rgba(0,0,0,.04);}
+.dev-card-head{display:flex;align-items:center;gap:12px;margin-bottom:6px;}
+.dev-card-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
+.dev-card-title{font-weight:800;font-size:.92rem;}
+.dev-card-sub{font-size:.76rem;color:var(--text-soft);margin-top:1px;}
+.dev-card-body{font-size:.82rem;color:var(--text);line-height:1.6;}
+.dev-card-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;}
+.dev-tag{font-size:.7rem;padding:3px 9px;border-radius:10px;font-weight:600;}
+
+/* Language card special */
+.lang-flags{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+.lang-flag-btn{padding:5px 12px;border-radius:14px;border:1.5px solid var(--border);font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;background:var(--card);color:var(--text-soft);transition:all .15s;}
+.lang-flag-btn.active{background:var(--blue);border-color:var(--blue);color:#fff;}
+.lang-content{display:none;}
+.lang-content.active{display:block;}
+.lang-example{background:var(--blue-soft);border-radius:var(--radius-sm);padding:10px 13px;margin-bottom:8px;position:relative;}
+.lang-example-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px;}
+.lang-example .word{font-size:1.15rem;font-weight:800;color:var(--blue);}
+.lang-example .meaning{font-size:.75rem;color:var(--text-soft);display:block;margin-bottom:4px;}
+.lang-example .tip{font-size:.75rem;color:var(--text);line-height:1.5;}
+.speak-btn{flex-shrink:0;width:38px;height:38px;border-radius:50%;border:none;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;transition:all .18s;background:#fff;box-shadow:0 2px 8px rgba(91,170,212,.25);}
+.speak-btn:hover{transform:scale(1.12);box-shadow:0 3px 12px rgba(91,170,212,.4);}
+.speak-btn.speaking{animation:pulse 0.6s infinite alternate;}
+@keyframes pulse{from{transform:scale(1);}to{transform:scale(1.18);box-shadow:0 4px 16px rgba(91,170,212,.55);}}
+
+code{background:#f0e8e0;padding:1px 6px;border-radius:4px;font-size:.85em;}
+
+/* NEW LANG UI */
+.lang-super-tabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px;}
+.lang-super-tab{padding:7px 14px;border-radius:20px;border:1.5px solid var(--border);font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;background:var(--card);color:var(--text-soft);transition:all .15s;}
+.lang-super-tab.active{background:var(--blue);border-color:var(--blue);color:#fff;}
+.lang-section{display:none;}
+.lang-section.active{display:block;}
+
+/* SCENE */
+.scene-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+.scene-tab{padding:6px 12px;border-radius:16px;border:1.5px solid var(--border);font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;background:var(--card);color:var(--text-soft);transition:all .15s;}
+.scene-tab.active{background:var(--coral);border-color:var(--coral);color:#fff;}
+.scene-lang-tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;}
+.scene-lang-tab{padding:5px 11px;border-radius:14px;border:1.5px solid var(--border);font-size:.75rem;font-weight:700;cursor:pointer;font-family:inherit;background:var(--card);color:var(--text-soft);transition:all .15s;}
+.scene-lang-tab.active{background:var(--purple);border-color:var(--purple);color:#fff;}
+.phrase-card{background:var(--card);border-radius:var(--radius-sm);border:1.5px solid var(--border);padding:12px 14px;margin-bottom:9px;display:flex;align-items:center;gap:12px;}
+.phrase-text{flex:1;}
+.phrase-main{font-size:1rem;font-weight:700;color:var(--text);line-height:1.3;}
+.phrase-zh{font-size:.78rem;color:var(--text-soft);margin-top:3px;}
+.phrase-speak{flex-shrink:0;width:36px;height:36px;border-radius:50%;border:none;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;background:var(--purple-soft);transition:all .18s;}
+.phrase-speak:hover{transform:scale(1.1);background:var(--purple);color:#fff;}
+.phrase-speak.speaking{animation:pulse .6s infinite alternate;}
+
+/* ALPHABET */
+.alpha-lang-tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
+.alpha-lang-tab{padding:5px 11px;border-radius:14px;border:1.5px solid var(--border);font-size:.75rem;font-weight:700;cursor:pointer;font-family:inherit;background:var(--card);color:var(--text-soft);transition:all .15s;}
+.alpha-lang-tab.active{background:var(--teal);border-color:var(--teal);color:#fff;}
+.alpha-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:8px;margin-bottom:6px;}
+.alpha-cell{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:10px 6px;text-align:center;cursor:pointer;transition:all .15s;user-select:none;}
+.alpha-cell:hover{border-color:var(--teal);background:var(--teal-soft);}
+.alpha-cell.speaking{border-color:var(--teal);background:var(--teal-soft);animation:pulse .5s infinite alternate;}
+.alpha-letter{font-size:1.5rem;font-weight:900;color:var(--teal);line-height:1;display:block;}
+.alpha-word{font-size:.58rem;color:var(--text-soft);margin-top:3px;line-height:1.2;display:block;}
+
+/* SONGS */
+.song-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+.song-tab{padding:6px 12px;border-radius:16px;border:1.5px solid var(--border);font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;background:var(--card);color:var(--text-soft);transition:all .15s;}
+.song-tab.active{background:var(--warn-dark);border-color:var(--warn-dark);color:#fff;}
+.song-card{background:var(--card);border-radius:var(--radius);border:1.5px solid var(--border);padding:16px;}
+.song-controls{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.song-play-btn{padding:9px 20px;border-radius:20px;border:none;cursor:pointer;font-family:inherit;font-size:.88rem;font-weight:700;background:var(--warn-dark);color:#fff;transition:all .18s;}
+.song-play-btn:hover{background:#a07a10;}
+.song-play-btn.playing{background:var(--red);animation:none;}
+.song-lyrics{display:flex;flex-direction:column;gap:4px;}
+.lyric-line{display:flex;align-items:baseline;gap:8px;padding:7px 10px;border-radius:8px;transition:background .2s;}
+.lyric-line.active{background:#FFF8D6;}
+.lyric-text{font-size:.95rem;font-weight:700;color:var(--text);}
+.lyric-roma{font-size:.72rem;color:var(--text-soft);}
+
+@keyframes fdIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:999;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:var(--card);border-radius:var(--radius);max-width:480px;width:100%;max-height:85vh;overflow-y:auto;padding:24px;animation:fdIn .2s ease;}
+.modal-close{float:right;background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--text-soft);}
+.modal-title{font-size:1.1rem;font-weight:800;margin-bottom:12px;color:var(--text);}
+
+@media(max-width:480px){
+  .cal-cell{min-height:62px;}
+  .cal-tag{font-size:.58rem;}
+  .stats{gap:6px;}
+  .stat-num{font-size:1.3rem;}
+}
+
+/* ===== BABY PROFILES ===== */
+.baby-bar{background:var(--card);border-bottom:1.5px solid var(--border);padding:8px 14px;display:flex;align-items:center;gap:8px;overflow-x:auto;scrollbar-width:none;max-width:720px;margin:0 auto;}
+.baby-bar::-webkit-scrollbar{display:none;}
+.baby-pill-wrap{display:flex;align-items:center;border-radius:20px;border:1.5px solid var(--border);background:var(--card);flex-shrink:0;overflow:hidden;transition:all .15s;}
+.baby-pill-wrap.active{border-color:var(--coral);}
+.baby-pill{display:flex;align-items:center;gap:5px;padding:5px 6px 5px 12px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;background:none;border:none;color:var(--text-soft);white-space:nowrap;}
+.baby-pill-wrap.active .baby-pill{background:var(--coral);color:#fff;}
+.baby-pill .baby-avatar{font-size:1rem;}
+.baby-edit-btn{padding:5px 9px 5px 5px;background:none;border:none;cursor:pointer;font-size:.8rem;color:var(--text-soft);opacity:.7;transition:opacity .15s;}
+.baby-pill-wrap.active .baby-edit-btn{color:#fff;opacity:.85;}
+.baby-edit-btn:hover{opacity:1;}
+.baby-add-btn{width:30px;height:30px;border-radius:50%;border:1.5px dashed var(--border);background:none;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-soft);flex-shrink:0;transition:all .15s;}
+.baby-add-btn:hover{border-color:var(--coral);color:var(--coral);}
+.collab-badge{margin-left:auto;display:flex;align-items:center;gap:5px;font-size:.72rem;font-weight:700;padding:4px 10px;border-radius:12px;background:var(--blue-soft);color:var(--blue);border:1px solid var(--blue);white-space:nowrap;flex-shrink:0;cursor:pointer;}
+.collab-badge:hover{background:var(--blue);color:#fff;}
+
+/* PRIVACY TOGGLE */
+.privacy-toggle{display:flex;gap:8px;flex-wrap:wrap;}
+.privacy-btn{flex:1;min-width:140px;display:flex;flex-direction:column;align-items:flex-start;gap:3px;padding:12px 14px;border-radius:var(--radius-sm);border:2px solid var(--border);background:var(--cream);cursor:pointer;font-family:inherit;text-align:left;transition:all .18s;}
+.privacy-btn.active{border-color:var(--coral);background:var(--peach);}
+.privacy-btn .privacy-icon{font-size:1.3rem;}
+.privacy-btn .privacy-label{font-size:.86rem;font-weight:800;color:var(--text);}
+.privacy-btn .privacy-desc{font-size:.7rem;color:var(--text-soft);line-height:1.4;}
+.baby-pill .privacy-mark{font-size:.7rem;margin-left:2px;opacity:.85;}
+
+/* SHARE BABY CHECKLIST */
+.share-baby-item{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--cream);margin-bottom:6px;font-size:.85rem;}
+.share-baby-item.locked{opacity:.55;}
+.share-baby-item .sb-avatar{font-size:1.1rem;}
+.share-baby-item .sb-name{flex:1;font-weight:700;}
+.share-baby-item .sb-tag{font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:10px;white-space:nowrap;}
+.tag-shared{background:var(--blue-soft);color:var(--blue);}
+.tag-private{background:#eee;color:#999;}
+
+/* ===== SHARE / COLLAB MODAL ===== */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;align-items:flex-end;justify-content:center;padding:0;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:var(--card);border-radius:var(--radius) var(--radius) 0 0;width:100%;max-width:500px;max-height:88vh;overflow-y:auto;padding:24px 20px 36px;animation:slideUp .25s ease;}
+@keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.modal-title{font-family:'Nunito',sans-serif;font-size:1.1rem;font-weight:900;color:var(--text);}
+.modal-close-btn{background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--text-soft);padding:4px;}
+.modal-section{margin-bottom:18px;}
+.modal-section h4{font-size:.82rem;font-weight:700;color:var(--text-soft);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;}
+.modal-action-row{display:flex;gap:8px;align-items:center;}
+.modal-input{flex:1;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;font-size:.88rem;font-family:inherit;color:var(--text);background:var(--cream);outline:none;}
+.modal-input:focus{border-color:var(--coral);}
+.modal-btn{padding:9px 16px;border-radius:var(--radius-sm);border:none;font-family:inherit;font-size:.84rem;font-weight:700;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.modal-btn-primary{background:var(--coral);color:#fff;}
+.modal-btn-primary:hover{background:var(--coral-dark);}
+.modal-btn-blue{background:var(--blue);color:#fff;}
+.modal-btn-blue:hover{background:#3d8fb8;}
+.modal-btn-outline{background:none;border:1.5px solid var(--border);color:var(--text-soft);}
+.modal-btn-outline:hover{border-color:var(--coral);color:var(--coral);}
+.copy-success{font-size:.75rem;color:var(--green);font-weight:600;opacity:0;transition:opacity .3s;}
+.copy-success.show{opacity:1;}
+.room-info{background:var(--blue-soft);border-radius:var(--radius-sm);padding:12px 14px;font-size:.82rem;color:var(--blue);line-height:1.6;}
+.room-info strong{font-weight:800;}
+.collab-members{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+.collab-member{padding:4px 10px;border-radius:12px;background:var(--peach);color:var(--coral-dark);font-size:.75rem;font-weight:700;}
+.divider{height:1px;background:var(--border);margin:16px 0;}
+.perm-tag{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:10px;font-size:.72rem;font-weight:700;}
+.perm-edit{background:var(--green-soft);color:var(--green);}
+.perm-view{background:#f0f0f0;color:#888;}
+
+/* ===== ADD BABY MODAL ===== */
+.avatar-picker{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+.avatar-opt{width:42px;height:42px;border-radius:50%;border:2px solid var(--border);font-size:1.4rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.avatar-opt.selected,.avatar-opt:hover{border-color:var(--coral);background:var(--peach);}
+
+</style>
+</head>
+<body>
+
+<header>
+  <span class="hdr-emoji">👶</span>
+  <h1>寶寶成長全紀錄</h1>
+  <p>副食品 · 保健品 · 發展指引 · 語言學習</p>
+</header>
+
+
+<!-- BABY BAR -->
+<div class="baby-bar" id="baby-bar">
+  <!-- rendered by JS -->
+</div>
+
+<!-- SHARE MODAL -->
+<div class="modal-overlay" id="share-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title">🔗 分享與邀請協作</span>
+      <button class="modal-close-btn" onclick="closeModal('share-modal')">✕</button>
+    </div>
+
+    <div class="modal-section">
+      <h4>📱 第一步：讓其他媽媽也能打開這個網頁</h4>
+      <div class="room-info">
+        這是一份<strong>獨立的網頁檔案</strong>，不是網站，沒有「網址」可以分享。要讓其他媽媽在<strong>她自己的手機</strong>上使用，請依下列方式把「檔案本身」傳給她：<br><br>
+        1️⃣ 在妳的手機找到這個 <code>.html</code> 檔案（通常在「檔案」App 或下載項目中）<br>
+        2️⃣ 用 LINE／Email／AirDrop／雲端硬碟（Google Drive、iCloud）把檔案傳給她<br>
+        3️⃣ 對方收到後，直接<strong>點擊檔案</strong> → 選擇用瀏覽器（Safari / Chrome）開啟<br>
+        4️⃣ 之後就能跟妳一樣正常使用整個網頁的所有功能<br><br>
+        <span style="font-size:.72rem;opacity:.85">💡 對方開啟後預設資料是空的，需要妳幫她也匯入一次目前的紀錄（見下方「邀請共同編輯」）。</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="modal-section">
+      <h4>👥 第二步：邀請家人一起記錄同一個寶寶</h4>
+      <p style="font-size:.8rem;color:var(--text-soft);margin-bottom:6px">適合：爸爸、保母、阿嬤等共同照顧者，大家記錄同一個寶寶的副食品狀況</p>
+      <p style="font-size:.78rem;color:var(--coral-dark);margin-bottom:10px">⚠️ 只有標記為「👥 共享協作」的寶寶才能被邀請，請先到寶寶名字旁的 ✏️ 設定</p>
+      <div id="share-baby-list" style="margin-bottom:12px"></div>
+      <button class="modal-btn modal-btn-primary" style="width:100%;margin-bottom:6px" onclick="exportData()">📤 產生邀請資料（複製到剪貼簿）</button>
+      <p style="font-size:.74rem;color:var(--text-soft);line-height:1.6">把複製的資料字串貼到 LINE 傳給對方 → 對方打開她自己的網頁 → 點此選單 → 貼到下方「匯入」欄位即可同步妳的紀錄。<br>之後雙方各自編輯完，<strong>重新產生一次並互相傳給對方</strong>，即可保持資料一致。</p>
+      <span class="copy-success" id="copy-ok">✓ 已複製到剪貼簿！</span>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="modal-section">
+      <h4>📥 收到邀請資料？貼在這裡匯入</h4>
+      <div class="modal-action-row">
+        <input class="modal-input" id="import-data-input" placeholder="貼上對方傳來的資料字串">
+        <button class="modal-btn modal-btn-blue" onclick="importData()">匯入</button>
+      </div>
+      <p style="font-size:.72rem;color:var(--text-soft);margin-top:6px">匯入時可選擇「合併」（保留妳原本的私人寶寶）或「完全取代」</p>
+    </div>
+  </div>
+</div>
+
+<!-- ADD BABY MODAL -->
+<div class="modal-overlay" id="baby-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title" id="baby-modal-title">👶 新增寶寶</span>
+      <button class="modal-close-btn" onclick="closeModal('baby-modal')">✕</button>
+    </div>
+    <div class="modal-section">
+      <h4>選擇頭貼</h4>
+      <div class="avatar-picker" id="avatar-picker">
+        <!-- rendered by JS -->
+      </div>
+    </div>
+    <div class="modal-section">
+      <h4>寶寶名字</h4>
+      <input class="modal-input" id="baby-name-input" placeholder="例：小米、弟弟、妹妹" maxlength="10" style="width:100%">
+    </div>
+    <div class="modal-section">
+      <h4>出生日期（選填）</h4>
+      <input class="modal-input" type="date" id="baby-birth-input" style="width:100%">
+    </div>
+    <div class="modal-section">
+      <h4>資料類型</h4>
+      <p style="font-size:.76rem;color:var(--text-soft);margin-bottom:8px">選擇此寶寶的紀錄是否要開放邀請家人共同編輯</p>
+      <div class="privacy-toggle">
+        <button class="privacy-btn" id="privacy-private" onclick="setBabyPrivacy('private')">
+          <span class="privacy-icon">🔒</span>
+          <span class="privacy-label">私人專屬</span>
+          <span class="privacy-desc">只存在這支手機，不會被其他人看到或編輯</span>
+        </button>
+        <button class="privacy-btn" id="privacy-shared" onclick="setBabyPrivacy('shared')">
+          <span class="privacy-icon">👥</span>
+          <span class="privacy-label">共享協作</span>
+          <span class="privacy-desc">可邀請爸爸、保母等人一起記錄同一份資料</span>
+        </button>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="modal-btn modal-btn-primary" style="flex:1" onclick="saveBaby()">儲存</button>
+      <button class="modal-btn modal-btn-outline" id="delete-baby-btn" style="display:none" onclick="deleteBaby()">🗑️ 刪除此寶寶</button>
+    </div>
+  </div>
+</div>
+
+<!-- TAB BAR -->
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('food')">🥣 副食品試敏</button>
+  <button class="tab-btn" onclick="switchTab('supp')">💊 保健品指引</button>
+  <button class="tab-btn" onclick="switchTab('dev')">🧠 發展活動</button>
+</div>
+
+<!-- =================== PAGE 1: FOOD =================== -->
+<div class="page active" id="page-food">
+  <div class="stats">
+    <div class="stat-card stat-safe"><div class="stat-num" id="count-safe">0</div><div class="stat-lbl">✅ 安全</div></div>
+    <div class="stat-card stat-pending"><div class="stat-num" id="count-pending">0</div><div class="stat-lbl">⏳ 觀察中</div></div>
+    <div class="stat-card stat-unsafe"><div class="stat-num" id="count-unsafe">0</div><div class="stat-lbl">⚠️ 不安全</div></div>
+  </div>
+
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+    <span style="font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:800;color:var(--text-soft);text-transform:uppercase;letter-spacing:1px;">➕ 新增食材</span>
+    <button id="share-open-btn" onclick="openModal('share-modal')" style="display:flex;align-items:center;gap:5px;padding:6px 13px;border-radius:16px;border:1.5px solid var(--blue);background:var(--blue-soft);color:var(--blue);font-family:inherit;font-size:.78rem;font-weight:700;cursor:pointer;flex-shrink:0;">🔗 分享 / 協作</button>
+  </div>
+  <div class="add-card">
+    <span class="chips-lbl">🌟 推薦試敏食材（點擊快速填入）</span>
+    <div class="chips" id="recommended-chips"></div>
+    <div class="form-row">
+      <div class="form-group" style="flex:2">
+        <label>食材名稱</label>
+        <input type="text" id="input-name" placeholder="例：蛋黃、燕麥..." maxlength="30">
+      </div>
+      <div class="form-group" style="flex:1">
+        <label>嘗試日期</label>
+        <input type="date" id="input-date">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>食材分類</label>
+        <select id="input-category">
+          <option value="穀物">🌾 穀物</option>
+          <option value="蔬菜">🥦 蔬菜</option>
+          <option value="水果">🍎 水果</option>
+          <option value="蛋白質">🥩 蛋白質</option>
+          <option value="乳製品">🥛 乳製品</option>
+          <option value="海鮮">🐟 海鮮</option>
+          <option value="其他">🍴 其他</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>開始月齡</label>
+        <select id="input-age">
+          <option value="4個月+">4個月+</option>
+          <option value="6個月+">6個月+</option>
+          <option value="8個月+">8個月+</option>
+          <option value="10個月+">10個月+</option>
+          <option value="12個月+">12個月+</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>備註（症狀、反應…）</label>
+        <textarea id="input-note" placeholder="例：皮膚輕微泛紅、無明顯反應..."></textarea>
+      </div>
+    </div>
+    <span class="chips-lbl" style="margin-bottom:7px">試敏結果</span>
+    <div class="status-toggle">
+      <button class="status-btn active-safe" id="btn-safe" onclick="selectStatus('safe')">✅ 安全</button>
+      <button class="status-btn" id="btn-pending" onclick="selectStatus('pending')">⏳ 觀察中</button>
+      <button class="status-btn" id="btn-unsafe" onclick="selectStatus('unsafe')">⚠️ 不安全</button>
+    </div>
+    <button class="btn-add" onclick="addFood()">＋ 加入紀錄</button>
+  </div>
+
+  <p class="sec-title">📅 月曆紀錄</p>
+  <div class="cal-card">
+    <div class="cal-nav">
+      <button class="cal-arrow" onclick="changeMonth(-1)">&#8249;</button>
+      <span class="cal-title" id="cal-title"></span>
+      <button class="cal-arrow" onclick="changeMonth(1)">&#8250;</button>
+    </div>
+    <div class="cal-wdays">
+      <div class="cal-wd">日</div><div class="cal-wd">一</div><div class="cal-wd">二</div>
+      <div class="cal-wd">三</div><div class="cal-wd">四</div><div class="cal-wd">五</div><div class="cal-wd">六</div>
+    </div>
+    <div class="cal-grid" id="cal-grid"></div>
+  </div>
+  <div class="day-detail" id="day-detail">
+    <div class="det-hdr">
+      <span class="det-date" id="det-date"></span>
+      <button class="det-close" onclick="closeDetail()">✕</button>
+    </div>
+    <div class="det-list" id="det-list"></div>
+  </div>
+</div>
+
+<!-- =================== PAGE 2: SUPPLEMENTS =================== -->
+<div class="page" id="page-supp">
+  <p class="sec-title">👶 選擇寶寶月齡</p>
+  <div class="age-selector" id="supp-age-sel"></div>
+  <div class="supp-grid" id="supp-grid"></div>
+</div>
+
+<!-- =================== PAGE 3: DEVELOPMENT =================== -->
+<div class="page" id="page-dev">
+  <p class="sec-title">👶 選擇月齡</p>
+  <div class="dev-age-sel" id="dev-age-sel"></div>
+  <div class="dev-tabs">
+    <button class="dev-tab active" data-cat="brain" onclick="switchDevCat('brain',this)">🧠 腦神經發展</button>
+    <button class="dev-tab" data-cat="motor" onclick="switchDevCat('motor',this)">🤲 手腦協調</button>
+    <button class="dev-tab" data-cat="lang" onclick="switchDevCat('lang',this)">🗣️ 語言學習</button>
+    <button class="dev-tab" data-cat="sport" onclick="switchDevCat('sport',this)">🏃 適合運動</button>
+  </div>
+  <div id="dev-content"></div>
+</div>
+
+<script>
+// ============================================================
+//  DATA
+// ============================================================
+const RECOMMENDED=[
+  {name:'米糊',emoji:'🍚',cat:'穀物',age:'4個月+'},
+  {name:'燕麥',emoji:'🌾',cat:'穀物',age:'6個月+'},
+  {name:'南瓜',emoji:'🎃',cat:'蔬菜',age:'4個月+'},
+  {name:'地瓜',emoji:'🍠',cat:'蔬菜',age:'4個月+'},
+  {name:'胡蘿蔔',emoji:'🥕',cat:'蔬菜',age:'4個月+'},
+  {name:'菠菜',emoji:'🥬',cat:'蔬菜',age:'6個月+'},
+  {name:'蘋果',emoji:'🍎',cat:'水果',age:'4個月+'},
+  {name:'香蕉',emoji:'🍌',cat:'水果',age:'6個月+'},
+  {name:'酪梨',emoji:'🥑',cat:'水果',age:'6個月+'},
+  {name:'蛋黃',emoji:'🥚',cat:'蛋白質',age:'4個月+'},
+  {name:'全蛋',emoji:'🍳',cat:'蛋白質',age:'8個月+'},
+  {name:'雞肉',emoji:'🍗',cat:'蛋白質',age:'6個月+'},
+  {name:'豬肉',emoji:'🥩',cat:'蛋白質',age:'6個月+'},
+  {name:'豆腐',emoji:'🧊',cat:'蛋白質',age:'6個月+'},
+  {name:'鮭魚',emoji:'🐟',cat:'海鮮',age:'8個月+'},
+  {name:'優格',emoji:'🥛',cat:'乳製品',age:'6個月+'},
+  {name:'起司',emoji:'🧀',cat:'乳製品',age:'8個月+'},
+  {name:'花生醬',emoji:'🥜',cat:'其他',age:'6個月+'},
+];
+const EMOJI_MAP={'穀物':'🌾','蔬菜':'🥦','水果':'🍎','蛋白質':'🥩','乳製品':'🥛','海鮮':'🐟','其他':'🍴'};
+const FOOD_EMOJI={'米糊':'🍚','燕麥':'🌾','南瓜':'🎃','地瓜':'🍠','胡蘿蔔':'🥕','菠菜':'🥬','蘋果':'🍎','香蕉':'🍌','酪梨':'🥑','蛋黃':'🥚','全蛋':'🍳','雞肉':'🍗','豬肉':'🥩','豆腐':'🧊','鮭魚':'🐟','優格':'🥛','起司':'🧀','花生醬':'🥜'};
+const S_ICON={safe:'✅',unsafe:'⚠️',pending:'⏳'};
+const S_TEXT={safe:'安全',unsafe:'不安全',pending:'觀察中'};
+
+// ---------- SUPPLEMENTS ----------
+const SUPP_AGES=['0–2 個月','3–4 個月','5–6 個月','7–9 個月','10–12 個月','1–2 歲'];
+const SUPPLEMENTS={
+  '0–2 個月':[
+    {icon:'☀️',color:'#FFF3CD',name:'維生素 D₃',dose:'每日 400 IU（純母乳寶寶必需）',priority:'high',
+     why:'母乳中維生素 D 含量極低（約 25 IU/L），無法滿足骨骼鈣磷代謝需求。美國兒科學會（AAP）、歐洲兒科胃腸肝病與營養學會（ESPGHAN）及台灣兒科醫學會均建議純母乳或混合哺乳嬰兒自出生後補充 400 IU/天，以預防佝僂病（rickets）及長期骨密度不足。配方奶寶寶若每日攝取超過 1 L 強化配方奶則可不額外補充。',source:'AAP Clinical Report 2022；ESPGHAN Position Paper 2013'},
+    {icon:'🩸',color:'#FFE0E0',name:'維生素 K₁',dose:'出生時肌肉注射 1 mg（醫院例行）',priority:'high',
+     why:'新生兒腸道菌群尚未建立，凝血因子 II、VII、IX、X 合成不足，若未補充維生素 K 易發生新生兒出血症（VKDB）。WHO 建議出生後立即肌肉注射 1 mg，保護效力超過口服分次給藥。',source:'WHO Guidelines；AAP Policy Statement 2003（reaffirmed 2020）'},
+    {icon:'🐟',color:'#D6F0FF',name:'Omega-3（DHA）',dose:'母親每日 200–300 mg DHA（透過母乳轉移）',priority:'med',
+     why:'DHA（二十二碳六烯酸）是構成大腦灰質及視網膜的關鍵磷脂成分。0–6 個月大腦每秒形成約 250,000 個神經突觸，DHA 供應直接影響視覺敏銳度與認知功能初始建立。哺乳媽媽補充可提升母乳 DHA 濃度。',source:'EFSA 2010；Lancet Neurology 2008'},
+  ],
+  '3–4 個月':[
+    {icon:'☀️',color:'#FFF3CD',name:'維生素 D₃',dose:'每日 400 IU（持續補充）',priority:'high',
+     why:'3–4 個月骨骼快速生長，鈣質沉積需要維生素 D 維持腸道鈣吸收率（無 D 時約 15%，有 D 時可達 60%）。此階段日照不足更需持續補充。',source:'AAP 2022；台灣兒科醫學會 2019'},
+    {icon:'🔴',color:'#FFE8E8',name:'鐵質預補充（早產兒）',dose:'早產兒：每日 2–4 mg/kg，自出生第 2–4 週起',priority:'high',
+     why:'早產兒體內鐵儲量不足（正常新生兒大部分鐵儲備在妊娠末三個月獲得），若未及時補充，3–4 個月時易出現缺鐵性貧血，影響髓鞘化（myelination）和認知發展。足月純母乳寶寶則建議 4 個月起每日 1 mg/kg。',source:'AAP 2010 鐵質補充指南'},
+    {icon:'🧠',color:'#EDE4F8',name:'神經鞘磷脂（SM）',dose:'主要來源：母乳（天然含有 SM）',priority:'low',
+     why:'神經鞘磷脂（Sphingomyelin）是神經元髓鞘的核心成分，3–6 個月大腦髓鞘化快速進行中。母乳中 SM 佔總磷脂約 38%，遠高於牛奶配方，有助神經訊號傳導速度提升及認知功能發展。',source:'Journal of Nutrition 2019；Nutrients 2021'},
+  ],
+  '5–6 個月':[
+    {icon:'🔴',color:'#FFE8E8',name:'鐵質',dose:'從富鐵副食品攝取；純母乳寶寶每日 1 mg/kg',priority:'high',
+     why:'6 個月後母乳中鐵質已無法滿足快速成長的需求（出生時儲存鐵逐漸耗盡），缺鐵是嬰幼兒最常見的營養缺乏，與記憶力、注意力、語言發展遲緩高度相關。WHO 建議 6 個月起優先從富鐵副食品（豬肉泥、蛋黃、強化米糊）攝取。',source:'WHO 2021 Complementary feeding；AAP 2010'},
+    {icon:'☀️',color:'#FFF3CD',name:'維生素 D₃',dose:'每日 400–600 IU',priority:'high',
+     why:'開始添加副食品後，若飲食中乳製品量不足，維生素 D 仍是最需補充的營養素。骨骼礦化、免疫調節（Treg 細胞活化）及降低日後過敏風險均有賴充足 D 值。',source:'ESPGHAN 2013；Nutrients 2020'},
+    {icon:'🦠',color:'#D4F0EE',name:'益生菌（Probiotics）',dose:'視需要補充（Lactobacillus rhamnosus GG 或 B. infantis）',priority:'low',
+     why:'副食品初期腸道菌群重組，適量益生菌有助維持腸道屏障完整性、調節免疫反應，研究顯示可降低特應性皮膚炎（濕疹）發生率，對高風險過敏家族尤其有益。',source:'ESPGHAN 2023；Cochrane Review 2022'},
+    {icon:'🧠',color:'#EDE4F8',name:'神經鞘磷脂（SM）',dose:'母乳或富含 SM 配方；副食品期可透過蛋黃攝取',priority:'med',
+     why:'5–6 個月是視覺皮質及海馬迴突觸修剪高峰期，SM 供應充足有助神經網絡效率化。蛋黃中含有豐富磷脂醯膽鹼（PC）及少量 SM，是初期副食品的理想來源之一。',source:'Nutrients 2021；Am J Clin Nutr 2018'},
+  ],
+  '7–9 個月':[
+    {icon:'🔴',color:'#FFE8E8',name:'鐵質',dose:'每日 11 mg（從食物攝取為主）',priority:'high',
+     why:'7–9 個月每日鐵需求達 11 mg，是成人男性的 2 倍。缺鐵不僅造成貧血，更直接影響基底核（basal ganglia）發育，導致執行功能、工作記憶下降，且部分損傷在補充後仍不可逆。優質來源：肝泥、豬肉絲、強化燕麥。',source:'Pediatrics 2011；WHO/UNICEF 2023'},
+    {icon:'🦴',color:'#E8F4FF',name:'鈣質',dose:'每日 270 mg（主要來源：母乳/配方奶+副食品）',priority:'med',
+     why:'9 個月長牙加速、骨骼持續礦化，鈣需求增加。母乳（每 100 mL 約 35 mg）搭配豆腐、優格、芝麻等副食品通常可達標，鈣不足會優先從骨骼動員影響長期骨密度峰值。',source:'DRIs Taiwan 2020；AAP'},
+    {icon:'🧠',color:'#EDE4F8',name:'膽鹼（Choline）',dose:'每日 150 mg（蛋黃、肉類、豆類）',priority:'med',
+     why:'膽鹼是乙醯膽鹼（學習記憶神經傳導物質）及磷脂醯膽鹼（細胞膜）的前驅物。7–9 個月海馬迴快速發育，充足膽鹼攝取與空間記憶、語言理解能力正相關。一顆蛋黃含膽鹼約 150 mg，是最佳天然來源。',source:'Am J Clin Nutr 2020；Nutrients 2022'},
+    {icon:'☀️',color:'#FFF3CD',name:'維生素 D₃',dose:'每日 400–600 IU（持續）',priority:'high',
+     why:'嬰兒食物中維生素 D 天然來源極少（鮭魚除外），副食品階段仍需補充。D 值不足與感染頻率上升、過敏性疾病風險增加密切相關。',source:'AAP 2022'},
+  ],
+  '10–12 個月':[
+    {icon:'🔴',color:'#FFE8E8',name:'鐵質',dose:'每日 11 mg（多樣化食物攝取）',priority:'high',
+     why:'1 歲前是大腦髓鞘化的關鍵窗口，缺鐵對神經系統的損害在此階段最為嚴重且不可逆。建議每天至少一份紅肉或深色蔬菜（搭配維生素 C 促進吸收）。',source:'Pediatrics 2011'},
+    {icon:'🦴',color:'#E8F4FF',name:'鈣質',dose:'每日 270 mg',priority:'med',
+     why:'準備斷奶或減少配方奶用量時，需確保鈣質來源充足。優格、起司、豆腐及深綠葉蔬菜是良好替代來源。',source:'DRIs Taiwan 2020'},
+    {icon:'🐟',color:'#D6F0FF',name:'DHA（Omega-3）',dose:'每日 100–150 mg（鮭魚、秋刀魚、強化食品）',priority:'med',
+     why:'DHA 積累在大腦前額葉的過程持續至 2 歲，與衝動控制、計劃能力（執行功能）發育相關。10–12 個月可每週 1–2 次攝取低汞深海魚。',source:'EFSA 2010；Nutrients 2019'},
+    {icon:'☀️',color:'#FFF3CD',name:'維生素 D₃',dose:'每日 600 IU',priority:'high',
+     why:'邁向 1 歲，日常活動增加但飲食中 D 仍不足，同時此階段免疫系統建立仰賴 D 調節 Th1/Th2 平衡，持續補充預防感染及過敏。',source:'AAP 2022；ESPGHAN 2013'},
+    {icon:'🧠',color:'#EDE4F8',name:'膽鹼 + 神經鞘磷脂',dose:'蛋黃（每日）、肝臟（每週 1–2 次）',priority:'med',
+     why:'神經鞘磷脂在前額葉白質沉積在此階段加速，膽鹼搭配 SM 有助提升神經訊號傳遞效率，對語言爆發期（約 12–18 個月）的詞彙習得有正面影響。',source:'J Nutr Biochem 2020'},
+  ],
+  '1–2 歲':[
+    {icon:'☀️',color:'#FFF3CD',name:'維生素 D₃',dose:'每日 600 IU',priority:'high',
+     why:'1 歲後步行增加，骨骼承重加大，維生素 D 維持骨質密度更形重要。台灣緯度雖較高，但幼兒防曬習慣及室內時間長，血清 25(OH)D 普遍偏低，建議持續補充。',source:'台灣兒科醫學會 2019；Endocrine Society Guidelines 2023'},
+    {icon:'🔴',color:'#FFE8E8',name:'鐵質',dose:'每日 7–11 mg（多樣飲食）',priority:'high',
+     why:'1–2 歲是語言爆發及運動技能精細化的黃金期，兩者均高度依賴前額葉及小腦充足的氧氣與鐵。挑食幼兒容易缺鐵，建議定期由兒科醫師追蹤血色素。',source:'AAP 2010；WHO 2023'},
+    {icon:'🦴',color:'#E8F4FF',name:'鈣質',dose:'每日 700 mg（全脂牛奶、起司、豆腐）',priority:'med',
+     why:'1 歲後可引入全脂牛奶（每日 360–480 mL）作為主要鈣來源，支持快速生長期的骨骼礦化，同時鈣也參與神經肌肉傳導及心肌節律調節。',source:'DRIs Taiwan 2020；AAP'},
+    {icon:'🐟',color:'#D6F0FF',name:'DHA（Omega-3）',dose:'每日 150–200 mg（每週 2–3 次魚類）',priority:'med',
+     why:'1–2 歲前額葉連結（prefrontal connectivity）快速建立，DHA 供應充足者在 4 歲時的詞彙量、空間推理測試表現顯著較優。避免高汞魚（鯊魚、旗魚），選擇鮭魚、鯖魚、秋刀魚。',source:'EFSA 2010；Child Dev 2021'},
+    {icon:'🌿',color:'#D4F0EE',name:'益生菌 + 益生元',dose:'視需要（優格、納豆、富含膳食纖維蔬果）',priority:'low',
+     why:'1–2 歲腸道菌群趨近成人模式，多樣化菌群與過敏、氣喘、自閉類群障礙（ASD）風險呈負相關。天然食物來源優先；益生菌製劑在有過敏家族史者可考慮諮詢醫師後使用。',source:'Gut Microbiome 2022；ESPGHAN 2023'},
+  ]
+};
+
+// ---------- DEVELOPMENT DATA ----------
+const DEV_AGES=['0–2 個月','3–4 個月','5–6 個月','7–9 個月','10–12 個月','1–2 歲'];
+
+const DEV_DATA={
+  '0–2 個月':{
+    brain:[
+      {icon:'👁️',bg:'#EDE4F8',color:'#7B5EA7',title:'黑白對比視覺卡',sub:'感官刺激 · 視覺皮質啟動',
+       body:'0–2 個月視力約 0.05，對高對比（黑白、明黃）圖形最敏感。每天 3–5 次，每次 5–10 分鐘，距離眼睛約 20–30 cm 展示簡單幾何圖形（圓、條紋、棋盤格），刺激視覺皮質（V1 區）突觸快速形成。',tags:['#視覺皮質','#感官統合','#突觸生成']},
+      {icon:'🎵',bg:'#EDE4F8',color:'#7B5EA7',title:'媽媽聲音 & 古典音樂',sub:'聽覺皮質 · 情緒調節',
+       body:'胎兒期已記住母親聲音頻率，出生後聽到熟悉聲音可激活前扣帶皮質（情緒安撫）。莫扎特 K.448（D大調雙鋼琴奏鳴曲）已有研究顯示短期空間推理提升效果，但最重要的是有節律的說話聲。',tags:['#聽覺皮質','#情緒安撫','#語音辨識']},
+    ],
+    motor:[
+      {icon:'🤱',bg:'#D4F0EE',color:'#3AAFA9',title:'肌膚接觸（Skin-to-skin）',sub:'觸覺統合 · 神經調節',
+       body:'袋鼠式護理（Kangaroo Care）降低皮質醇、提升催產素，促進迷走神經張力發展。每天至少 1 小時，有助心跳穩定、睡眠品質、體重增加及早期神經系統調節。',tags:['#觸覺','#迷走神經','#安全依附']},
+      {icon:'🖐️',bg:'#D4F0EE',color:'#3AAFA9',title:'掌握反射練習',sub:'原始反射 · 手部神經',
+       body:'輕觸寶寶手心，握持反射（Palmar grasp reflex）啟動，是日後精細動作的神經基礎。每天可輕按手心 5–10 次，觀察反應，此反射通常 3–4 個月後被意志性抓握取代。',tags:['#原始反射','#手部感覺','#神經成熟']},
+    ],
+    lang:[{_scene:true}],
+    sport:[
+      {icon:'🧘',bg:'#D6EDCF',color:'#4A9E3F',title:'嬰兒瑜伽（被動）',sub:'關節活動 · 血液循環',
+       body:'由照顧者輕柔帶動四肢：雙腳交替蹬踏（模擬騎腳踏車）、雙手展開/收攏、膝蓋輕壓腹部（助排氣）。每次 5–8 分鐘，沐浴後最佳，促進本體感覺發展與腸胃蠕動。',tags:['#被動運動','#本體感覺','#排氣']},
+      {icon:'🤸',bg:'#D6EDCF',color:'#4A9E3F',title:'趴趴時間（Tummy Time）',sub:'頸部肌力 · 抬頭控制',
+       body:'每天累積 30 分鐘（分多次），從趴在照顧者胸上開始，逐漸轉移到硬質平面。鍛鍊頸伸肌群，預防斜頭症（positional plagiocephaly），是爬行及坐立的重要前備技能。',tags:['#頸背肌力','#前庭覺','#抬頭']},
+    ],
+  },
+  '3–4 個月':{
+    brain:[
+      {icon:'🪩',bg:'#EDE4F8',color:'#7B5EA7',title:'移動式懸掛玩具',sub:'視覺追蹤 · 前庭整合',
+       body:'3 個月視力提升至約 0.1，可追蹤緩慢移動物體。懸掛顏色鮮豔、會發出聲音的玩具（距臉 30 cm），左右緩慢移動，訓練眼球平滑追視（smooth pursuit），激活視覺聯合皮質與前庭整合。',tags:['#視覺追蹤','#眼動控制','#感官整合']},
+      {icon:'🪞',bg:'#EDE4F8',color:'#7B5EA7',title:'鏡子遊戲',sub:'自我認知初始 · 社交腦',
+       body:'將安全嬰兒鏡放在視野前，寶寶對鏡中臉孔的注視時間是靜態圖片的 3 倍，激活顳上溝（STS）社交腦區。配合表情模仿，促進鏡像神經元早期活化。',tags:['#自我認知','#鏡像神經元','#社交']},
+    ],
+    motor:[
+      {icon:'🎯',bg:'#D4F0EE',color:'#3AAFA9',title:'伸手抓握練習',sub:'手眼協調 · 視覺引導動作',
+       body:'將顏色鮮豔的搖鈴放在寶寶手可及範圍（側邊稍遠），誘導主動伸手。4 個月起出現意志性抓握（voluntary reach），是小腦–頂葉–運動皮質迴路發育的里程碑。',tags:['#手眼協調','#意志性抓握','#前庭小腦']},
+      {icon:'🤸',bg:'#D4F0EE',color:'#3AAFA9',title:'Tummy Time 進階',sub:'俯臥抬胸 · 上肢支撐',
+       body:'3–4 個月應能在趴姿撐起頭部 45°–90°。在眼前放鏡子或玩具誘導抬頭，強化菱形肌、三角肌後束，為翻身做準備。每天至少 40 分鐘（分次）。',tags:['#上肢肌力','#背伸肌','#翻身預備']},
+    ],
+    lang:[{_scene:true}],
+    sport:[
+      {icon:'🎪',bg:'#D6EDCF',color:'#4A9E3F',title:'彈力球平衡搖晃',sub:'前庭刺激 · 平衡感',
+       body:'將寶寶俯臥或仰臥在大瑜伽球上（穩固支撐），輕緩前後/左右搖動。前庭刺激激活小腦絨球（flocculus）及腦幹前庭核，提升平衡反應及姿勢控制，同時對情緒調節有正向影響。',tags:['#前庭覺','#小腦','#平衡']},
+      {icon:'💃',bg:'#D6EDCF',color:'#4A9E3F',title:'懷抱律動舞蹈',sub:'韻律感 · 前庭本體覺整合',
+       body:'抱著寶寶隨音樂輕輕搖擺、轉圈、上下律動，訓練前庭–本體覺整合迴路，同時音樂節拍強化早期韻律感（音樂能力與語言節律共享神經資源）。',tags:['#韻律','#前庭整合','#情感連結']},
+    ],
+  },
+  '5–6 個月':{
+    brain:[
+      {icon:'🧩',bg:'#EDE4F8',color:'#7B5EA7',title:'物體永久性遊戲',sub:'海馬迴 · 工作記憶萌芽',
+       body:'用布蓋住玩具（半蓋），誘導寶寶找尋。5–6 個月物體永久性（object permanence）開始建立，這是海馬迴情境記憶的雛形。每天 3–5 次，每次 3 分鐘，不宜過長以免挫折。',tags:['#物體永久性','#海馬迴','#工作記憶']},
+      {icon:'🎭',bg:'#EDE4F8',color:'#7B5EA7',title:'誇張表情模仿',sub:'鏡像神經元 · 情緒識別',
+       body:'面對寶寶做出誇張表情（驚訝、開心、思考），停頓等待寶寶模仿。5 個月嬰兒已能區分 6 種基本情緒表情，模仿遊戲激活額下回（IFG）鏡像系統，是同理心的神經基礎。',tags:['#情緒識別','#模仿','#社交腦']},
+    ],
+    motor:[
+      {icon:'🧸',bg:'#D4F0EE',color:'#3AAFA9',title:'雙手轉移物品',sub:'雙側協調 · 胼胝體發展',
+       body:'給寶寶玩具，觀察其從一手轉到另一手。此動作需要胼胝體（連接左右大腦半球）協調傳遞訊息，是雙側整合的早期里程碑，也是日後寫字、剪紙等複雜雙手動作的基礎。',tags:['#雙側協調','#胼胝體','#精細動作']},
+      {icon:'🔄',bg:'#D4F0EE',color:'#3AAFA9',title:'翻身練習',sub:'核心肌群 · 旋轉模式',
+       body:'5–6 個月大多能完成仰臥→俯臥翻身。在旁邊放玩具誘導，避免強迫。翻身整合了頸部旋轉、腹斜肌、髖部控制，是運動發展「旋轉模式」（rotational pattern）的關鍵里程碑。',tags:['#核心肌群','#旋轉模式','#翻身']},
+    ],
+    lang:[{_scene:true}],
+    sport:[
+      {icon:'🏊',bg:'#D6EDCF',color:'#4A9E3F',title:'嬰兒游泳 / 水療',sub:'全身感覺統合 · 水中阻力訓練',
+       body:'5 個月起可開始嬰兒游泳課（專業教練、消毒水池）。水中浮力減輕關節負擔，水阻提供全身本體感覺輸入，激活前庭系統，並有助於情緒調節（副交感神經活化）。',tags:['#感覺統合','#前庭','#水療']},
+      {icon:'🪑',bg:'#D6EDCF',color:'#4A9E3F',title:'輔助坐姿練習',sub:'軀幹穩定 · 豎脊肌強化',
+       body:'用U型枕或雙手支撐輔助坐姿，每次 3–5 分鐘。訓練豎脊肌（erector spinae）及腹橫肌，提升軀幹穩定性，是 7–8 個月獨立坐的必要前備條件，也刺激上肢自由探索。',tags:['#軀幹穩定','#核心','#坐姿']},
+    ],
+  },
+  '7–9 個月':{
+    brain:[
+      {icon:'📦',bg:'#EDE4F8',color:'#7B5EA7',title:'容器裝入/取出遊戲',sub:'因果關係 · 空間認知',
+       body:'準備不同大小容器，讓寶寶把積木放入再取出。此遊戲促進「容納」的空間概念及「我的行動造成結果」的因果認知，激活頂葉空間處理區及前額葉因果推理回路。',tags:['#空間認知','#因果關係','#問題解決']},
+      {icon:'🫣',bg:'#EDE4F8',color:'#7B5EA7',title:'躲貓貓進階版',sub:'物體永久性鞏固 · 預測能力',
+       body:'把玩具完全藏在布下，讓寶寶找。8–9 個月物體永久性完全建立（Piaget A-not-B task），寶寶開始記住東西被藏的位置，前額葉工作記憶顯著提升。',tags:['#物體永久性','#工作記憶','#前額葉']},
+    ],
+    motor:[
+      {icon:'🎮',bg:'#D4F0EE',color:'#3AAFA9',title:'拇指食指捏取（Pincer Grasp）',sub:'精細動作里程碑 · 皮質控制',
+       body:'提供小塊軟食（豌豆、小米餅）讓寶寶練習用拇指+食指捏取。Pincer grasp 出現（約 9 個月）代表初級運動皮質對手部獨立指節的精細控制成熟，是書寫、繪畫的神經前提。',tags:['#Pincer Grasp','#精細動作','#皮質控制']},
+      {icon:'🐛',bg:'#D4F0EE',color:'#3AAFA9',title:'爬行誘導',sub:'對側協調 · 胼胝體整合',
+       body:'在前方放玩具誘導爬行（腹部爬行→四肢爬行）。爬行是左右腦最重要的協調訓練，對側手腳交替使用激活胼胝體跨半球整合，對閱讀、數學等雙腦整合任務有長期正向影響。',tags:['#對側爬行','#胼胝體','#雙腦整合']},
+    ],
+    lang:[{_scene:true}],
+    sport:[
+      {icon:'🧗',bg:'#D6EDCF',color:'#4A9E3F',title:'安全爬山坡',sub:'重力感知 · 全身肌力',
+       body:'在地板放泡棉楔形坡墊，讓寶寶爬上爬下。克服重力的爬坡運動激活前庭–脊髓路徑，強化伸髖肌群及肩胛穩定肌，提升重力感知整合，為站立做準備。',tags:['#重力感知','#全身肌力','#前庭']},
+      {icon:'💦',bg:'#D6EDCF',color:'#4A9E3F',title:'嬰兒游泳持續',sub:'心肺功能 · 感覺統合',
+       body:'持續每週游泳 1–2 次，8–9 個月可嘗試在水中練習踢腳、拍水，提升心肺耐力基礎及水中自信。有研究顯示嬰兒期游泳與 5 歲時較佳的動作協調及社交適應相關。',tags:['#心肺','#水中協調','#感覺統合']},
+    ],
+  },
+  '10–12 個月':{
+    brain:[
+      {icon:'📚',bg:'#EDE4F8',color:'#7B5EA7',title:'指書共讀（Shared Reading）',sub:'語言爆發準備 · 前額葉激活',
+       body:'每天 15–20 分鐘親子共讀，用手指著圖說「這是狗！汪汪！」。共讀時嬰兒大腦語言區（布洛卡區、威尼克區）活化程度比單獨看圖高 60%，是語言爆發（12–18 個月）的關鍵燃料。',tags:['#共讀','#語言區','#詞彙積累']},
+      {icon:'🎲',bg:'#EDE4F8',color:'#7B5EA7',title:'分類配對遊戲',sub:'類別概念 · 前額葉推理',
+       body:'準備 2–3 組同類玩具（紅色積木 vs 黃色積木），示範分類後讓寶寶模仿。類別化（categorization）是概念思維的起點，激活前額葉腹外側區（vlPFC）的規則提取功能。',tags:['#分類','#概念思維','#前額葉']},
+    ],
+    motor:[
+      {icon:'🚶',bg:'#D4F0EE',color:'#3AAFA9',title:'扶站與側走（Cruising）',sub:'重心轉移 · 站立前庭整合',
+       body:'讓寶寶扶沙發邊站立並側向移步（Cruising）。重心左右轉移激活小腦蚓部及基底核，協調下肢主動肌/拮抗肌切換，為獨立步行（約 12 個月）奠定神經運動基礎。',tags:['#扶站','#側走','#小腦基底核']},
+      {icon:'🎨',bg:'#D4F0EE',color:'#3AAFA9',title:'手指畫 / 食物感觸',sub:'觸壓覺精細化 · 創意表達',
+       body:'用食品級顏料或南瓜泥讓寶寶用手指塗抹在紙上。手掌感覺皮質（S1）在 10–12 個月快速細化，豐富觸覺輸入促進 S1 神經地圖精密化，對日後書寫握筆感覺反饋有正面影響。',tags:['#觸覺精細化','#感覺皮質','#創意']},
+    ],
+    lang:[{_scene:true}],
+    sport:[
+      {icon:'⚽',bg:'#D6EDCF',color:'#4A9E3F',title:'滾球遊戲',sub:'追視 · 手眼腳協調',
+       body:'坐對面互相滾球，或讓寶寶扶站踢球。追蹤球的軌跡訓練預測性眼動（predictive saccade），踢球激活初級運動皮質腳部區域，是足球、跑步等下肢技能的早期神經基礎。',tags:['#追視','#踢球','#運動皮質']},
+      {icon:'🛝',bg:'#D6EDCF',color:'#4A9E3F',title:'溜滑梯 / 助行器步行',sub:'重力適應 · 步行準備',
+       body:'在安全溜滑梯（家用小型）練習爬上、溜下，或使用學步助行器練習推走。高度變化提供豐富前庭刺激，助行器推行訓練臀中肌及脛骨前肌，建立步行的肌肉記憶。',tags:['#前庭','#步行肌群','#重力適應']},
+    ],
+  },
+  '1–2 歲':{
+    brain:[
+      {icon:'🎭',bg:'#EDE4F8',color:'#7B5EA7',title:'假裝遊戲（Pretend Play）',sub:'象徵思維 · 前額葉高階功能',
+       body:'給寶寶玩具電話假裝打電話、用積木「開車」。假裝遊戲是象徵表徵（symbolic representation）的起點，前額葉背外側（dlPFC）及顳頂聯合區（TPJ）協同激活，是語言、數學及社交理解的共同神經基礎。',tags:['#假裝遊戲','#象徵思維','#前額葉']},
+      {icon:'🧱',bg:'#EDE4F8',color:'#7B5EA7',title:'積木堆疊（至少 4 層）',sub:'空間推理 · 手眼精度',
+       body:'1 歲後能堆 2 層，18 個月可達 4 層，2 歲達 6–7 層。每增加一層需要更精密的視覺回饋-手部調整迴路（小腦-頂葉-前運動皮質），空間推理能力的早期指標之一。',tags:['#空間推理','#小腦','#精細動作']},
+    ],
+    motor:[
+      {icon:'✏️',bg:'#D4F0EE',color:'#3AAFA9',title:'塗鴉 / 大蠟筆畫',sub:'三指握筆 · 創意表達',
+       body:'提供大蠟筆，鼓勵在紙上自由塗鴉。18 個月開始從握拳式過渡到三指捏握（tripod grasp），激活拇指對掌肌（Opponens pollicis）精細控制，為 3–4 歲正式握筆寫字做神經準備。',tags:['#三指握','#創意','#精細動作']},
+      {icon:'🏃',bg:'#D4F0EE',color:'#3AAFA9',title:'獨立行走與跑步',sub:'步態成熟 · 平衡反應',
+       body:'1 歲開始走，15 個月步態逐漸穩定。提供安全開放空間練習快走轉跑，跑步需要單腳離地瞬間的動態平衡，小腦蚓部與基底核協同精進，保護性反應（protective stepping）也在此期成熟。',tags:['#步態','#動態平衡','#保護性反應']},
+    ],
+    lang:[{_scene:true}],
+    sport:[
+      {icon:'⚽',bg:'#D6EDCF',color:'#4A9E3F',title:'踢球 / 追球跑',sub:'動態追蹤 · 腳部協調',
+       body:'將球放在地上讓寶寶跑去踢。預測球的位置需要額葉-基底核「前瞻性運動計劃」，踢球整合視覺、前庭及本體感覺，是足球等運動技能最早的神經基礎。每次 10–15 分鐘。',tags:['#踢球','#動態追蹤','#運動計劃']},
+      {icon:'🤸',bg:'#D6EDCF',color:'#4A9E3F',title:'攀爬架 / 室內遊具',sub:'全身肌力 · 膽識培養',
+       body:'在安全攀爬架上練習爬上爬下，媽媽在側邊守護而非托扶。自主攀爬激活全身 400+ 條肌肉的協調收縮，同時培養「評估風險-採取行動」的執行功能，冒險性遊戲（risky play）對前額葉發育有正向影響。',tags:['#攀爬','#全身肌力','#風險評估']},
+      {icon:'🏊',bg:'#D6EDCF',color:'#4A9E3F',title:'幼兒游泳課',sub:'心肺 · 水中動作協調',
+       body:'1 歲後可轉入更結構化的幼兒游泳課，練習踢腳、撥水、水中吐泡泡。研究（Griffith University 2013）顯示 1–5 歲定期游泳幼兒在數學、語言、身體技能均優於同齡，歸因於前庭整合與雙側協調的長期效益。',tags:['#游泳','#雙側協調','#認知效益']},
+    ],
+  },
+};
+
+// ============================================================
+//  LANGUAGE SCENES DATA
+// ============================================================
+const LANG_SCENES={
+  scenes:[
+    {id:'meal',icon:'🍚',label:'吃飯時',
+     phrases:[
+       {zh:'來吃飯囉！',en:'Time to eat!',ja:'ごはんだよ！',es:'¡A comer!'},
+       {zh:'張開嘴巴，啊～',en:'Open wide, ahhh!',ja:'お口あけて、あーん！',es:'Abre la boca, ¡aaah!'},
+       {zh:'好好吃喔！',en:'So yummy!',ja:'おいしいね！',es:'¡Qué rico!'},
+       {zh:'還要嗎？再來一口？',en:'Want more? One more bite?',ja:'もっとたべる？もう一口？',es:'¿Más? ¿Un bocado más?'},
+       {zh:'吃飽了嗎？',en:'Are you full?',ja:'おなかいっぱい？',es:'¿Estás lleno/a?'},
+       {zh:'擦擦小嘴巴',en:'Let\'s wipe your mouth',ja:'お口をふこうね',es:'Vamos a limpiar tu boquita'},
+     ]},
+    {id:'bath',icon:'🛁',label:'洗澡時',
+     phrases:[
+       {zh:'來洗澡囉！',en:'Bath time!',ja:'お風呂の時間だよ！',es:'¡Hora del baño!'},
+       {zh:'水水暖暖的，舒服嗎？',en:'Warm water, feel good?',ja:'ぬるぬる気持ちいいね',es:'¿El agua tibia se siente bien?'},
+       {zh:'洗洗頭髮，好香喔！',en:'Washing your hair, smells nice!',ja:'頭を洗おうね、いいにおい！',es:'Lavamos el cabello, ¡huele rico!'},
+       {zh:'洗手手、洗腳腳',en:'Wash your hands, wash your feet',ja:'手を洗って、足を洗って',es:'Lavamos manitas y piecitos'},
+       {zh:'拍拍水，好好玩！',en:'Splash splash, so fun!',ja:'バチャバチャ、たのしいね！',es:'¡Chapotea, qué divertido!'},
+       {zh:'出來了，用毛巾包起來',en:'All done, let\'s wrap you up',ja:'あがろうね、タオルで包むよ',es:'Ya terminamos, te envuelvo en la toalla'},
+     ]},
+    {id:'goout',icon:'👟',label:'出門準備',
+     phrases:[
+       {zh:'我們要出門囉！',en:'We\'re going out!',ja:'お出かけするよ！',es:'¡Vamos a salir!'},
+       {zh:'穿上衣服，伸手手',en:'Put on your clothes, stretch your arms',ja:'お洋服を着ようね、手を伸ばして',es:'Vamos a vestirte, estira los bracitos'},
+       {zh:'穿鞋鞋，坐好好',en:'Put on your shoes, sit still',ja:'くつを履こうね、じっとしてね',es:'Ponemos los zapatos, quédate quieto/a'},
+       {zh:'戴帽子，防曬喔！',en:'Wear your hat, protect from the sun!',ja:'帽子をかぶって、日焼け防止！',es:'Ponte el sombrero, ¡para protegerte del sol!'},
+       {zh:'準備好了嗎？出發！',en:'Ready? Let\'s go!',ja:'準備できた？出発！',es:'¿Listos? ¡Vamos!'},
+       {zh:'坐推車囉，扣好安全帶',en:'Into the stroller, buckle up',ja:'ベビーカーに乗ろうね、ベルトしめるよ',es:'Al carrito, abrochamos el cinturón'},
+     ]},
+    {id:'play',icon:'🌳',label:'外出遊玩',
+     phrases:[
+       {zh:'哇！好大的公園！',en:'Wow! Such a big park!',ja:'わあ！大きい公園だね！',es:'¡Guau! ¡Qué parque tan grande!'},
+       {zh:'看！那是小狗！汪汪！',en:'Look! A doggy! Woof woof!',ja:'見て！ワンちゃんだよ！わんわん！',es:'¡Mira! ¡Un perrito! ¡Guau guau!'},
+       {zh:'摸摸草地，軟軟的',en:'Touch the grass, it\'s soft',ja:'草を触って、やわらかいね',es:'Toca el pasto, está suavecito'},
+       {zh:'盪鞦韆，飛起來囉！',en:'On the swing, wheee!',ja:'ブランコに乗って、ふわーっ！',es:'En el columpio, ¡wiiiii!'},
+       {zh:'要回家了，揮揮手再見',en:'Time to go home, wave bye-bye',ja:'帰る時間だよ、バイバイしよう',es:'Es hora de volver, di adiós con la manita'},
+       {zh:'今天好好玩，累了嗎？',en:'So much fun today, are you tired?',ja:'今日は楽しかったね、疲れた？',es:'¡Qué día tan divertido, estás cansado/a?'},
+     ]},
+  ],
+  alphabets:{
+    en:{
+      label:'🔤 英文字母 A–Z',
+      letters:'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map((L,i)=>{
+        const phonics=['Apple','Ball','Cat','Dog','Elephant','Fish','Goat','Hat','Ice cream','Jam','Kite','Lion','Monkey','Nest','Orange','Penguin','Queen','Rabbit','Sun','Tree','Umbrella','Violin','Whale','Xylophone','Yacht','Zebra'];
+        return {letter:L,word:phonics[i]};
+      }),
+      locale:'en-US'
+    },
+    ja:{
+      label:'🔤 日文五十音（あいうえお）',
+      letters:[
+        {letter:'あ',word:'あり（螞蟻）'},{letter:'い',word:'いぬ（狗）'},{letter:'う',word:'うし（牛）'},
+        {letter:'え',word:'えび（蝦子）'},{letter:'お',word:'おに（鬼）'},{letter:'か',word:'かに（螃蟹）'},
+        {letter:'き',word:'きつね（狐狸）'},{letter:'く',word:'くま（熊）'},{letter:'け',word:'けむし（毛蟲）'},
+        {letter:'こ',word:'こあら（無尾熊）'},{letter:'さ',word:'さかな（魚）'},{letter:'し',word:'しか（鹿）'},
+        {letter:'す',word:'すずめ（麻雀）'},{letter:'せ',word:'せみ（蟬）'},{letter:'そ',word:'ぞう（大象）'},
+        {letter:'た',word:'たぬき（貍貓）'},{letter:'ち',word:'ちょう（蝴蝶）'},{letter:'つ',word:'つる（仙鶴）'},
+        {letter:'て',word:'てんとうむし（瓢蟲）'},{letter:'と',word:'とり（鳥）'},{letter:'な',word:'なまず（鯰魚）'},
+        {letter:'に',word:'にわとり（雞）'},{letter:'ぬ',word:'ぬいぐるみ（玩偶）'},{letter:'ね',word:'ねこ（貓）'},
+        {letter:'の',word:'のはら（原野）'},{letter:'は',word:'はな（花）'},{letter:'ひ',word:'ひつじ（羊）'},
+        {letter:'ふ',word:'ふくろう（貓頭鷹）'},{letter:'へ',word:'へび（蛇）'},{letter:'ほ',word:'ほし（星星）'},
+      ],
+      locale:'ja-JP'
+    },
+    es:{
+      label:'🔤 西文字母 A–Z',
+      letters:'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map((L,i)=>{
+        const words=['Abeja（蜜蜂）','Burro（驢子）','Casa（家）','Delfín（海豚）','Elefante（大象）','Flor（花）','Gato（貓）','Hormiga（螞蟻）','Iguana（鬣蜥）','Jirafa（長頸鹿）','Koala（無尾熊）','León（獅子）','Mono（猴子）','Nido（鳥巢）','Oso（熊）','Perro（狗）','Queso（起司）','Rana（青蛙）','Sol（太陽）','Tortuga（烏龜）','Uva（葡萄）','Vaca（乳牛）','Wafle（鬆餅）','Xilófono（木琴）','Yema（蛋黃）','Zebra（斑馬）'];
+        return {letter:L,word:words[i]};
+      }),
+      locale:'es-MX'
+    },
+  },
+  songs:[
+    {id:'twinkle_zh',lang:'zh',locale:'zh-TW',title:'小星星',emoji:'⭐',
+     lines:[
+       {text:'一閃一閃亮晶晶',roma:'yī shǎn yī shǎn liàng jīng jīng'},
+       {text:'滿天都是小星星',roma:'mǎn tiān dōu shì xiǎo xīng xīng'},
+       {text:'掛在天上放光明',roma:'guà zài tiān shàng fàng guāng míng'},
+       {text:'好像許多小眼睛',roma:'hǎo xiàng xǔ duō xiǎo yǎn jīng'},
+       {text:'一閃一閃亮晶晶',roma:'yī shǎn yī shǎn liàng jīng jīng'},
+       {text:'滿天都是小星星',roma:'mǎn tiān dōu shì xiǎo xīng xīng'},
+     ]},
+    {id:'twinkle_en',lang:'en',locale:'en-US',title:'Twinkle Twinkle',emoji:'✨',
+     lines:[
+       {text:'Twinkle twinkle little star',roma:'TWINK-ul TWINK-ul LIT-ul star'},
+       {text:'How I wonder what you are',roma:'how I WUN-der what you ar'},
+       {text:'Up above the world so high',roma:'up ah-BUV the world so HY'},
+       {text:'Like a diamond in the sky',roma:'lyk a DY-mund in the sky'},
+       {text:'Twinkle twinkle little star',roma:'TWINK-ul TWINK-ul LIT-ul star'},
+       {text:'How I wonder what you are',roma:'how I WUN-der what you ar'},
+     ]},
+    {id:'twinkle_ja',lang:'ja',locale:'ja-JP',title:'きらきら星',emoji:'🌟',
+     lines:[
+       {text:'きらきら光る　お空の星よ',roma:'ki-ra-ki-ra hi-ka-ru　o-so-ra-no-ho-shi-yo'},
+       {text:'まばたきしては　みんなを見てる',roma:'ma-ba-ta-ki-shi-te-wa　min-na-o-mi-te-ru'},
+       {text:'あおいお空に　きらきら光る',roma:'a-o-i-o-so-ra-ni　ki-ra-ki-ra-hi-ka-ru'},
+       {text:'小さなお星よ　きらきら光れ',roma:'chi-i-sa-na-o-ho-shi-yo　ki-ra-ki-ra-hi-ka-re'},
+     ]},
+    {id:'babyshark_zh',lang:'zh',locale:'zh-TW',title:'嬰兒鯊魚',emoji:'🦈',
+     lines:[
+       {text:'Baby 鯊魚，啵啵啵啵啵',roma:'Baby shāyú，bō bō bō bō bō'},
+       {text:'媽媽鯊魚，啵啵啵啵啵',roma:'māma shāyú，bō bō bō bō bō'},
+       {text:'爸爸鯊魚，啵啵啵啵啵',roma:'bàba shāyú，bō bō bō bō bō'},
+       {text:'我是小鯊魚！',roma:'wǒ shì xiǎo shāyú！'},
+     ]},
+    {id:'babyshark_en',lang:'en',locale:'en-US',title:'Baby Shark',emoji:'🦈',
+     lines:[
+       {text:'Baby shark, doo doo doo doo doo doo',roma:'BAY-bee shark, doo doo doo doo doo doo'},
+       {text:'Mama shark, doo doo doo doo doo doo',roma:'MAH-mah shark, doo doo doo doo doo doo'},
+       {text:'Daddy shark, doo doo doo doo doo doo',roma:'DAD-ee shark, doo doo doo doo doo doo'},
+       {text:'Baby shark!',roma:'BAY-bee shark!'},
+     ]},
+    {id:'babyshark_es',lang:'es',locale:'es-MX',title:'Tiburón Bebé',emoji:'🦈',
+     lines:[
+       {text:'Tiburón bebé, doo doo doo doo doo',roma:'ti-bu-RON beh-BEH, doo doo doo doo doo'},
+       {text:'Mamá tiburón, doo doo doo doo doo',roma:'mah-MAH ti-bu-RON, doo doo doo doo doo'},
+       {text:'Papá tiburón, doo doo doo doo doo',roma:'pah-PAH ti-bu-RON, doo doo doo doo doo'},
+       {text:'¡Tiburón bebé!',roma:'ti-bu-RON beh-BEH!'},
+     ]},
+  ]
+};
+
+// ============================================================
+//  AVATARS
+// ============================================================
+const AVATARS=['👶','🐣','🐥','🌟','🌈','🍼','🧸','🐰','🐻','🦊','🐼','🌸'];
+
+// ============================================================
+//  STATE
+// ============================================================
+
+// ============================================================
+//  SAFE STORAGE WRAPPER
+//  說明：用「檔案」App 以 file:// 方式打開網頁時，部分手機瀏覽器
+//  （特別是 iOS Safari）會封鎖 localStorage 存取並丟出錯誤，導致
+//  整段 JS 中斷執行（推薦食材按鈕、月曆都無法顯示）。這裡加上防呆，
+//  若 localStorage 無法使用，自動改用記憶體暫存，確保網頁仍可正常
+//  運作（只是資料不會永久保存，這是 file:// 限制下無法避免的）。
+// ============================================================
+let memoryStore={};
+let storageAvailable=true;
+try{
+  const t='__bb_test__';
+  localStorage.setItem(t,'1');
+  localStorage.removeItem(t);
+}catch(e){
+  storageAvailable=false;
+}
+const safeStorage={
+  getItem(k){
+    if(storageAvailable){ try{return localStorage.getItem(k);}catch(e){} }
+    return Object.prototype.hasOwnProperty.call(memoryStore,k)?memoryStore[k]:null;
+  },
+  setItem(k,v){
+    if(storageAvailable){ try{localStorage.setItem(k,v);return;}catch(e){} }
+    memoryStore[k]=v;
+  }
+};
+
+// Multi-baby: babies = [{id, name, avatar, birth, privacy:'private'|'shared', records:[]}]
+let babies = JSON.parse(safeStorage.getItem('bb-babies')||'null');
+if(!babies || !Array.isArray(babies) || babies.length===0){
+  // Migrate old single records if any
+  const oldRecs = JSON.parse(safeStorage.getItem('baby-food-v2')||'[]');
+  babies = [{id:'b'+Date.now(), name:'寶寶', avatar:'👶', birth:'', privacy:'private', records: oldRecs}];
+  saveBabies();
+}
+// 向下相容：舊資料沒有 privacy 欄位的話，預設為私人
+babies.forEach(b=>{ if(!b.privacy) b.privacy='private'; });
+
+let activeBabyId = babies[0].id;
+function activeBaby(){ return babies.find(b=>b.id===activeBabyId)||babies[0]; }
+function getRecords(){ return activeBaby().records; }
+
+let currentStatus='safe';
+let calYear, calMonth, selectedDate=null;
+let suppAge=SUPP_AGES[0];
+let devAge=DEV_AGES[0];
+let devCat='brain';
+let langTab='zh';
+let editingBabyId=null;
+let selectedAvatar=AVATARS[0];
+let selectedPrivacy='private';
+
+// ============================================================
+//  TABS
+// ============================================================
+function switchTab(t){
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>{
+    b.classList.toggle('active',['food','supp','dev'][i]===t);
+  });
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+t).classList.add('active');
+}
+
+// ============================================================
+//  PAGE 1 – FOOD
+// ============================================================
+function gE(n,c){return FOOD_EMOJI[n]||EMOJI_MAP[c]||'🍴';}
+
+function renderChips(){
+  document.getElementById('recommended-chips').innerHTML=RECOMMENDED.map(r=>
+    `<button class="chip" onclick="fillChip('${r.name}','${r.cat}','${r.age}')">${gE(r.name,r.cat)} ${r.name}</button>`
+  ).join('');
+}
+function fillChip(n,c,a){
+  document.getElementById('input-name').value=n;
+  document.getElementById('input-category').value=c;
+  document.getElementById('input-age').value=a;
+  document.getElementById('input-name').focus();
+}
+function selectStatus(s){
+  currentStatus=s;
+  ['safe','pending','unsafe'].forEach(id=>{
+    document.getElementById('btn-'+id).className='status-btn'+(id===s?' active-'+id:'');
+  });
+}
+function addFood(){
+  const name=document.getElementById('input-name').value.trim();
+  const date=document.getElementById('input-date').value;
+  const cat=document.getElementById('input-category').value;
+  const age=document.getElementById('input-age').value;
+  const note=document.getElementById('input-note').value.trim();
+  if(!name){alert('請輸入食材名稱！');return;}
+  if(!date){alert('請選擇日期！');return;}
+  getRecords().unshift({id:Date.now(),name,date,cat,age,note,status:currentStatus});
+  save();
+  const[y,m]=date.split('-').map(Number);
+  calYear=y;calMonth=m-1;
+  renderCalendar();updateStats();openDetail(date);
+  document.getElementById('input-name').value='';
+  document.getElementById('input-note').value='';
+}
+function saveBabies(){safeStorage.setItem('bb-babies',JSON.stringify(babies));}
+function save(){saveBabies();}
+function deleteRecord(id){
+  if(!confirm('確定要刪除？'))return;
+  activeBaby().records=activeBaby().records.filter(r=>r.id!==id);
+  save();renderCalendar();updateStats();
+  if(selectedDate)openDetail(selectedDate);
+}
+function updateStats(){
+  document.getElementById('count-safe').textContent=getRecords().filter(r=>r.status==='safe').length;
+  document.getElementById('count-pending').textContent=getRecords().filter(r=>r.status==='pending').length;
+  document.getElementById('count-unsafe').textContent=getRecords().filter(r=>r.status==='unsafe').length;
+}
+function changeMonth(d){
+  calMonth+=d;
+  if(calMonth>11){calMonth=0;calYear++;}
+  if(calMonth<0){calMonth=11;calYear--;}
+  closeDetail();renderCalendar();
+}
+function renderCalendar(){
+  document.getElementById('cal-title').textContent=`${calYear} 年 ${calMonth+1} 月`;
+  const todayStr=new Date().toISOString().split('T')[0];
+  const firstDay=new Date(calYear,calMonth,1).getDay();
+  const days=new Date(calYear,calMonth+1,0).getDate();
+  const dateMap={};
+  getRecords().forEach(r=>{if(!dateMap[r.date])dateMap[r.date]=[];dateMap[r.date].push(r);});
+  let html='';
+  for(let i=0;i<firstDay;i++)html+=`<div class="cal-cell empty"></div>`;
+  for(let d=1;d<=days;d++){
+    const ds=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dr=dateMap[ds]||[];
+    const isToday=ds===todayStr;
+    const dow=new Date(calYear,calMonth,d).getDay();
+    const dc=dow===0?'sun':dow===6?'sat':'';
+    let tags=dr.slice(0,2).map(r=>`<div class="cal-tag t-${r.status}">${S_ICON[r.status]} ${r.name}</div>`).join('');
+    if(dr.length>2)tags+=`<div class="cal-more">+${dr.length-2}</div>`;
+    html+=`<div class="cal-cell ${isToday?'today':''} ${dc} ${dr.length?'has-rec':''}" ${dr.length?`onclick="openDetail('${ds}')"`:''}><div class="cal-day-num">${d}</div><div class="cal-tags">${tags}</div></div>`;
+  }
+  const rem=(firstDay+days)%7;
+  if(rem)for(let i=0;i<7-rem;i++)html+=`<div class="cal-cell empty"></div>`;
+  document.getElementById('cal-grid').innerHTML=html;
+}
+function openDetail(ds){
+  selectedDate=ds;
+  const dr=getRecords().filter(r=>r.date===ds);
+  if(!dr.length){closeDetail();return;}
+  const[y,m,d]=ds.split('-');
+  document.getElementById('det-date').textContent=`📅 ${y} 年 ${parseInt(m)} 月 ${parseInt(d)} 日`;
+  document.getElementById('det-list').innerHTML=dr.map(r=>`
+    <div class="det-item">
+      <span class="det-emoji">${gE(r.name,r.cat)}</span>
+      <div class="det-info">
+        <div class="det-name">${r.name}</div>
+        <div class="det-sub">${EMOJI_MAP[r.cat]||'🍴'} ${r.cat} · 👶 ${r.age}</div>
+        ${r.note?`<div class="det-note">💬 ${r.note}</div>`:''}
+      </div>
+      <span class="det-badge badge-${r.status}">${S_ICON[r.status]} ${S_TEXT[r.status]}</span>
+      <button class="btn-del" onclick="deleteRecord(${r.id})">🗑️</button>
+    </div>`).join('');
+  const p=document.getElementById('day-detail');
+  p.classList.add('open');
+  p.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function closeDetail(){selectedDate=null;document.getElementById('day-detail').classList.remove('open');}
+
+// ============================================================
+//  PAGE 2 – SUPPLEMENTS
+// ============================================================
+function renderSuppAges(){
+  const el=document.getElementById('supp-age-sel');
+  el.innerHTML=SUPP_AGES.map(a=>`<button class="age-pill ${a===suppAge?'active':''}" onclick="setSuppAge('${a}')">${a}</button>`).join('');
+}
+function setSuppAge(a){suppAge=a;renderSuppAges();renderSupp();}
+function renderSupp(){
+  const list=SUPPLEMENTS[suppAge]||[];
+  document.getElementById('supp-grid').innerHTML=list.map((s,i)=>`
+    <div class="supp-card" id="sc-${i}" onclick="toggleSupp(${i})">
+      <div class="supp-head">
+        <div class="supp-icon" style="background:${s.color}">${s.icon}</div>
+        <div class="supp-main">
+          <div class="supp-name">${s.name}</div>
+          <div class="supp-dose">${s.dose}</div>
+        </div>
+        <span class="supp-badge priority-${s.priority}">${s.priority==='high'?'🔴 必要':s.priority==='med'?'🟡 建議':'🟢 參考'}</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="supp-expand" id="se-${i}">
+        <div class="supp-why"><h4>📖 為什麼這個月齡需要？</h4>${s.why}</div>
+        <div class="supp-source">📚 參考來源：${s.source}</div>
+      </div>
+    </div>`).join('');
+}
+function toggleSupp(i){
+  const card=document.getElementById('sc-'+i);
+  const expand=document.getElementById('se-'+i);
+  const isOpen=expand.classList.contains('open');
+  expand.classList.toggle('open',!isOpen);
+  card.classList.toggle('open',!isOpen);
+}
+
+// ============================================================
+//  PAGE 3 – DEVELOPMENT
+// ============================================================
+function renderDevAges(){
+  const el=document.getElementById('dev-age-sel');
+  el.innerHTML=DEV_AGES.map(a=>`<button class="age-pill ${a===devAge?'active':''}" onclick="setDevAge('${a}')">${a}</button>`).join('');
+}
+function setDevAge(a){devAge=a;renderDevAges();renderDev();}
+function switchDevCat(c,btn){
+  devCat=c;langTab='zh';
+  document.querySelectorAll('.dev-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderDev();
+}
+function setLang(l){
+  langTab=l;
+  document.querySelectorAll('.lang-flag-btn').forEach(b=>b.classList.toggle('active',b.dataset.lang===l));
+  document.querySelectorAll('.lang-content').forEach(lc=>lc.classList.toggle('active',lc.dataset.lang===l));
+}
+// ---- TTS ----
+const LANG_LOCALE={zh:'zh-TW',en:'en-US',ja:'ja-JP',es:'es-MX'};
+let activeSpeakBtn=null;
+let songUtterances=[];
+let songPlaying=false;
+let currentSongId=null;
+let currentLyricIdx=-1;
+let sceneLang='en';
+let alphaLang='en';
+let activeSongTab=null;
+let activeSceneId=null;
+let activeLangSuperTab='scene';
+
+function getVoice(locale){
+  const vs=window.speechSynthesis.getVoices();
+  return vs.find(v=>v.lang===locale)||vs.find(v=>v.lang.startsWith(locale.split('-')[0]))||null;
+}
+
+function speak(text,locale,btnEl){
+  if(!window.speechSynthesis){alert('瀏覽器不支援語音合成');return;}
+  window.speechSynthesis.cancel();
+  if(activeSpeakBtn&&activeSpeakBtn!==btnEl){activeSpeakBtn.classList.remove('speaking');activeSpeakBtn.textContent='🔊';}
+  const utt=new SpeechSynthesisUtterance(text);
+  utt.lang=locale;utt.rate=0.82;utt.pitch=1.05;
+  const v=getVoice(locale);if(v)utt.voice=v;
+  utt.onstart=()=>{btnEl.classList.add('speaking');btnEl.textContent='🔈';activeSpeakBtn=btnEl;};
+  utt.onend=utt.onerror=()=>{btnEl.classList.remove('speaking');btnEl.textContent='🔊';activeSpeakBtn=null;};
+  window.speechSynthesis.speak(utt);
+}
+
+function speakAlpha(letterText, wordText, locale, cell){
+  if(!window.speechSynthesis)return;
+  window.speechSynthesis.cancel();
+  document.querySelectorAll('.alpha-cell.speaking').forEach(c=>c.classList.remove('speaking'));
+  cell.classList.add('speaking');
+  const v=getVoice(locale);
+  // Step 1: speak the letter name at clear pace
+  const uttLetter=new SpeechSynthesisUtterance(letterText);
+  uttLetter.lang=locale; uttLetter.rate=0.85; uttLetter.pitch=1.1;
+  if(v) uttLetter.voice=v;
+  // Step 2: after 650ms gap, speak the example word slowly
+  uttLetter.onend=()=>{
+    setTimeout(()=>{
+      {
+        const uttWord=new SpeechSynthesisUtterance(wordText);
+        uttWord.lang=locale; uttWord.rate=0.58; uttWord.pitch=1.0;
+        if(v) uttWord.voice=v;
+        uttWord.onend=uttWord.onerror=()=>cell.classList.remove('speaking');
+        window.speechSynthesis.speak(uttWord);
+      }
+    }, 650);
+  };
+  uttLetter.onerror=()=>cell.classList.remove('speaking');
+  window.speechSynthesis.speak(uttLetter);
+}
+
+function stopSong(){
+  window.speechSynthesis.cancel();
+  songPlaying=false;
+  document.querySelectorAll('.lyric-line').forEach(l=>l.classList.remove('active'));
+  const pb=document.getElementById('song-play-btn');
+  if(pb){pb.textContent='▶ 播放';pb.classList.remove('playing');}
+}
+
+function playSong(songId){
+  const song=LANG_SCENES.songs.find(s=>s.id===songId);
+  if(!song)return;
+  if(songPlaying&&currentSongId===songId){stopSong();return;}
+  stopSong();
+  currentSongId=songId;songPlaying=true;
+  const pb=document.getElementById('song-play-btn');
+  if(pb){pb.textContent='⏹ 停止';pb.classList.add('playing');}
+  let idx=0;
+  function speakLine(){
+    if(!songPlaying||idx>=song.lines.length){stopSong();return;}
+    document.querySelectorAll('.lyric-line').forEach((l,i)=>l.classList.toggle('active',i===idx));
+    const utt=new SpeechSynthesisUtterance(song.lines[idx].text);
+    utt.lang=song.locale;utt.rate=0.78;
+    const v=getVoice(song.locale);if(v)utt.voice=v;
+    utt.onend=()=>{idx++;setTimeout(speakLine,300);};
+    utt.onerror=()=>stopSong();
+    window.speechSynthesis.speak(utt);
+  }
+  speakLine();
+}
+
+// ---- Lang UI state ----
+function setLangSuperTab(t){
+  activeLangSuperTab=t;
+  document.querySelectorAll('.lang-super-tab').forEach(b=>b.classList.toggle('active',b.dataset.t===t));
+  document.querySelectorAll('.lang-section').forEach(s=>s.classList.toggle('active',s.dataset.t===t));
+  if(t==='alpha')renderAlpha();
+  if(t==='song')renderSong();
+  if(t==='scene')renderScene();
+}
+function setSceneId(id){
+  activeSceneId=id;
+  document.querySelectorAll('.scene-tab').forEach(b=>b.classList.toggle('active',b.dataset.id===id));
+  renderScenePhrases();
+}
+function setSceneLang(l){
+  sceneLang=l;
+  document.querySelectorAll('.scene-lang-tab').forEach(b=>b.classList.toggle('active',b.dataset.l===l));
+  renderScenePhrases();
+}
+function setAlphaLang(l){
+  alphaLang=l;
+  document.querySelectorAll('.alpha-lang-tab').forEach(b=>b.classList.toggle('active',b.dataset.l===l));
+  renderAlphaGrid();
+}
+function setSongTab(id){
+  stopSong();activeSongTab=id;
+  document.querySelectorAll('.song-tab').forEach(b=>b.classList.toggle('active',b.dataset.id===id));
+  renderSongCard();
+}
+
+function renderScene(){
+  if(!activeSceneId)activeSceneId=LANG_SCENES.scenes[0].id;
+  const el=document.getElementById('lang-scene-content');
+  if(!el)return;
+  const sceneTabs=LANG_SCENES.scenes.map(s=>`<button class="scene-tab${s.id===activeSceneId?' active':''}" data-id="${s.id}" onclick="setSceneId('${s.id}')">${s.icon} ${s.label}</button>`).join('');
+  const langTabs=['en','ja','es'].map(l=>{
+    const lbl={en:'🇺🇸 英文',ja:'🇯🇵 日文',es:'🇲🇽 西文'}[l];
+    return `<button class="scene-lang-tab${sceneLang===l?' active':''}" data-l="${l}" onclick="setSceneLang('${l}')">${lbl}</button>`;
+  }).join('');
+  el.innerHTML=`<div class="scene-tabs">${sceneTabs}</div><div class="scene-lang-tabs">${langTabs}</div><div id="scene-phrases"></div>`;
+  renderScenePhrases();
+}
+function renderScenePhrases(){
+  const el=document.getElementById('scene-phrases');if(!el)return;
+  const scene=LANG_SCENES.scenes.find(s=>s.id===activeSceneId);if(!scene)return;
+  const locale={en:'en-US',ja:'ja-JP',es:'es-MX'}[sceneLang];
+  el.innerHTML='';
+  scene.phrases.forEach((p,i)=>{
+    const foreign=p[sceneLang];
+    const card=document.createElement('div');
+    card.className='phrase-card';
+
+    const textDiv=document.createElement('div');
+    textDiv.className='phrase-text';
+    const mainDiv=document.createElement('div');
+    mainDiv.className='phrase-main';
+    mainDiv.textContent=foreign;
+    const zhDiv=document.createElement('div');
+    zhDiv.className='phrase-zh';
+    zhDiv.textContent='🇹🇼 '+p.zh;
+    textDiv.appendChild(mainDiv);
+    textDiv.appendChild(zhDiv);
+
+    const btnF=document.createElement('button');
+    btnF.className='phrase-speak';
+    btnF.title='聽外語';
+    btnF.textContent='🔊';
+    btnF.addEventListener('click',function(){speak(foreign,locale,this);});
+
+    const btnZh=document.createElement('button');
+    btnZh.className='phrase-speak';
+    btnZh.title='聽中文';
+    btnZh.textContent='🔊';
+    btnZh.style.background='#FFF3E8';
+    btnZh.addEventListener('click',function(){speak(p.zh,'zh-TW',this);});
+
+    card.appendChild(textDiv);
+    card.appendChild(btnF);
+    card.appendChild(btnZh);
+    el.appendChild(card);
+  });
+}
+
+function renderAlpha(){
+  const el=document.getElementById('lang-alpha-content');if(!el)return;
+  const langTabs=['en','ja','es'].map(l=>{
+    const d=LANG_SCENES.alphabets[l];
+    return `<button class="alpha-lang-tab${alphaLang===l?' active':''}" data-l="${l}" onclick="setAlphaLang('${l}')">${d.label.slice(0,12)}</button>`;
+  }).join('');
+  el.innerHTML=`<div class="alpha-lang-tabs">${langTabs}</div><div id="alpha-grid-wrap"></div>`;
+  renderAlphaGrid();
+}
+function renderAlphaGrid(){
+  const el=document.getElementById('alpha-grid-wrap');if(!el)return;
+  const d=LANG_SCENES.alphabets[alphaLang];if(!d)return;
+  const cells=d.letters.map((item,i)=>{
+    const word=item.word.replace(/（.*?）/g,'').replace(/[()]/g,'').trim();
+    const div=document.createElement('div');
+    div.className='alpha-cell';
+    div.id='ac-'+i;
+    div.dataset.letter=item.letter;
+    div.dataset.word=word;
+    div.dataset.locale=d.locale;
+    div.innerHTML='<span class="alpha-letter">'+item.letter+'</span><span class="alpha-word">'+item.word+'</span>';
+    div.addEventListener('click',function(){speakAlpha(this.dataset.letter,this.dataset.word,this.dataset.locale,this);});
+    return div;
+  });
+  el.innerHTML='<p style="font-size:.75rem;color:var(--text-soft);margin-bottom:10px">點擊字母格：先唸字母 → 停頓 → 慢唸單字 🔊</p>';
+  const grid=document.createElement('div');
+  grid.className='alpha-grid';
+  cells.forEach(c=>grid.appendChild(c));
+  el.appendChild(grid);
+}
+
+function renderSong(){
+  const el=document.getElementById('lang-song-content');if(!el)return;
+  if(!activeSongTab)activeSongTab=LANG_SCENES.songs[0].id;
+  const tabs=LANG_SCENES.songs.map(s=>`<button class="song-tab${activeSongTab===s.id?' active':''}" data-id="${s.id}" onclick="setSongTab('${s.id}')">${s.emoji} ${s.title}</button>`).join('');
+  el.innerHTML=`<div class="song-tabs">${tabs}</div><div id="song-card-wrap"></div>`;
+  renderSongCard();
+}
+function renderSongCard(){
+  const el=document.getElementById('song-card-wrap');if(!el)return;
+  const song=LANG_SCENES.songs.find(s=>s.id===activeSongTab);if(!song)return;
+
+  const card=document.createElement('div');
+  card.className='song-card';
+
+  const controls=document.createElement('div');
+  controls.className='song-controls';
+
+  const playBtn=document.createElement('button');
+  playBtn.className='song-play-btn';
+  playBtn.id='song-play-btn';
+  playBtn.textContent='▶ 播放';
+  playBtn.addEventListener('click',function(){playSong(song.id);});
+
+  const hint=document.createElement('span');
+  hint.style.cssText='font-size:.8rem;color:var(--text-soft)';
+  hint.textContent='逐行朗讀，字幕同步高亮';
+
+  controls.appendChild(playBtn);
+  controls.appendChild(hint);
+
+  const lyricsDiv=document.createElement('div');
+  lyricsDiv.className='song-lyrics';
+  song.lines.forEach((l,i)=>{
+    const line=document.createElement('div');
+    line.className='lyric-line';
+    line.id='ll-'+i;
+    const txt=document.createElement('span');
+    txt.className='lyric-text';
+    txt.textContent=l.text;
+    const roma=document.createElement('span');
+    roma.className='lyric-roma';
+    roma.textContent=l.roma;
+    line.appendChild(txt);
+    line.appendChild(roma);
+    lyricsDiv.appendChild(line);
+  });
+
+  card.appendChild(controls);
+  card.appendChild(lyricsDiv);
+  el.innerHTML='';
+  el.appendChild(card);
+}
+
+function renderDev(){
+  const data=(DEV_DATA[devAge]||{})[devCat]||[];
+  const el=document.getElementById('dev-content');
+
+  if(devCat==='lang'){
+    el.innerHTML=`
+    <div class="dev-card" style="padding:16px">
+      <div class="dev-card-head" style="margin-bottom:14px">
+        <div class="dev-card-icon" style="background:#D6EEFB;font-size:1.4rem">🗣️</div>
+        <div><div class="dev-card-title">語言學習工具箱</div><div class="dev-card-sub">生活情境會話 · 字母發音 · 兒歌字幕</div></div>
+      </div>
+      <div class="lang-super-tabs">
+        <button class="lang-super-tab${activeLangSuperTab==='scene'?' active':''}" data-t="scene" onclick="setLangSuperTab('scene')">🏠 生活情境</button>
+        <button class="lang-super-tab${activeLangSuperTab==='alpha'?' active':''}" data-t="alpha" onclick="setLangSuperTab('alpha')">🔤 字母發音</button>
+        <button class="lang-super-tab${activeLangSuperTab==='song'?' active':''}" data-t="song" onclick="setLangSuperTab('song')">🎵 兒歌字幕</button>
+      </div>
+      <div class="lang-section${activeLangSuperTab==='scene'?' active':''}" data-t="scene" id="lang-scene-content"></div>
+      <div class="lang-section${activeLangSuperTab==='alpha'?' active':''}" data-t="alpha" id="lang-alpha-content"></div>
+      <div class="lang-section${activeLangSuperTab==='song'?' active':''}" data-t="song" id="lang-song-content"></div>
+    </div>`;
+    if(activeLangSuperTab==='scene')renderScene();
+    else if(activeLangSuperTab==='alpha')renderAlpha();
+    else renderSong();
+    return;
+  }
+
+  // Brain / Motor / Sport
+  const catColors={brain:'var(--purple)',motor:'var(--teal)',sport:'var(--green)'};
+  el.innerHTML=`<div class="dev-grid">${data.map(item=>`
+    <div class="dev-card">
+      <div class="dev-card-head">
+        <div class="dev-card-icon" style="background:${item.bg};color:${item.color};font-size:1.3rem">${item.icon}</div>
+        <div><div class="dev-card-title">${item.title}</div><div class="dev-card-sub">${item.sub}</div></div>
+      </div>
+      <div class="dev-card-body">${item.body}</div>
+      <div class="dev-card-tags">${item.tags.map(t=>`<span class="dev-tag" style="background:${item.bg};color:${item.color}">${t}</span>`).join('')}</div>
+    </div>`).join('')}
+  </div>`;
+}
+
+
+// ============================================================
+//  BABY BAR
+// ============================================================
+function renderBabyBar(){
+  const bar=document.getElementById('baby-bar');
+  if(!bar)return;
+  bar.innerHTML='';
+  babies.forEach(b=>{
+    const wrap=document.createElement('div');
+    wrap.className='baby-pill-wrap'+(b.id===activeBabyId?' active':'');
+
+    const pill=document.createElement('button');
+    pill.className='baby-pill';
+    const mark = b.privacy==='shared' ? '<span class="privacy-mark">👥</span>' : '<span class="privacy-mark">🔒</span>';
+    pill.innerHTML='<span class="baby-avatar">'+b.avatar+'</span> '+b.name+' '+mark;
+    pill.title=b.privacy==='shared' ? '共享協作寶寶' : '私人專屬寶寶';
+    pill.addEventListener('click',()=>{activeBabyId=b.id;renderBabyBar();renderCalendar();updateStats();closeDetail();});
+    wrap.appendChild(pill);
+
+    const editBtn=document.createElement('button');
+    editBtn.className='baby-edit-btn';
+    editBtn.innerHTML='✏️';
+    editBtn.title='編輯 / 刪除此寶寶';
+    editBtn.addEventListener('click',(e)=>{e.stopPropagation();openEditBaby(b.id);});
+    wrap.appendChild(editBtn);
+
+    bar.appendChild(wrap);
+  });
+  const addBtn=document.createElement('button');
+  addBtn.className='baby-add-btn';
+  addBtn.title='新增寶寶';
+  addBtn.textContent='+';
+  addBtn.addEventListener('click',openAddBaby);
+  bar.appendChild(addBtn);
+  // 分享提示徽章
+  const badge=document.createElement('div');
+  badge.className='collab-badge';
+  badge.innerHTML='🔗 分享 / 邀請協作';
+  badge.title='點擊查看如何分享或邀請他人共同編輯';
+  badge.addEventListener('click',()=>openModal('share-modal'));
+  bar.appendChild(badge);
+}
+
+// ============================================================
+//  BABY CRUD
+// ============================================================
+function openAddBaby(){
+  editingBabyId=null;
+  selectedAvatar=AVATARS[0];
+  selectedPrivacy='private';
+  document.getElementById('baby-modal-title').textContent='👶 新增寶寶';
+  document.getElementById('baby-name-input').value='';
+  document.getElementById('baby-birth-input').value='';
+  document.getElementById('delete-baby-btn').style.display='none';
+  renderAvatarPicker();
+  renderPrivacyToggle();
+  openModal('baby-modal');
+}
+function openEditBaby(id){
+  const b=babies.find(x=>x.id===id);if(!b)return;
+  editingBabyId=id;
+  selectedAvatar=b.avatar||AVATARS[0];
+  selectedPrivacy=b.privacy||'private';
+  document.getElementById('baby-modal-title').textContent='✏️ 編輯寶寶資訊';
+  document.getElementById('baby-name-input').value=b.name;
+  document.getElementById('baby-birth-input').value=b.birth||'';
+  document.getElementById('delete-baby-btn').style.display=babies.length>1?'':'none';
+  renderAvatarPicker();
+  renderPrivacyToggle();
+  openModal('baby-modal');
+}
+function setBabyPrivacy(p){
+  selectedPrivacy=p;
+  renderPrivacyToggle();
+}
+function renderPrivacyToggle(){
+  const privBtn=document.getElementById('privacy-private');
+  const sharedBtn=document.getElementById('privacy-shared');
+  if(privBtn)privBtn.classList.toggle('active',selectedPrivacy==='private');
+  if(sharedBtn)sharedBtn.classList.toggle('active',selectedPrivacy==='shared');
+}
+function renderAvatarPicker(){
+  const el=document.getElementById('avatar-picker');
+  el.innerHTML='';
+  AVATARS.forEach(av=>{
+    const btn=document.createElement('div');
+    btn.className='avatar-opt'+(av===selectedAvatar?' selected':'');
+    btn.textContent=av;
+    btn.addEventListener('click',()=>{selectedAvatar=av;renderAvatarPicker();});
+    el.appendChild(btn);
+  });
+}
+function saveBaby(){
+  const name=document.getElementById('baby-name-input').value.trim()||'寶寶';
+  const birth=document.getElementById('baby-birth-input').value;
+  if(editingBabyId){
+    const b=babies.find(x=>x.id===editingBabyId);
+    if(b){b.name=name;b.avatar=selectedAvatar;b.birth=birth;b.privacy=selectedPrivacy;}
+  } else {
+    babies.push({id:'b'+Date.now(),name,avatar:selectedAvatar,birth,privacy:selectedPrivacy,records:[]});
+  }
+  saveBabies();
+  closeModal('baby-modal');
+  renderBabyBar();
+}
+function deleteBaby(){
+  if(!confirm('確定要刪除此寶寶的所有紀錄嗎？此操作無法復原。'))return;
+  babies=babies.filter(b=>b.id!==editingBabyId);
+  if(!babies.find(b=>b.id===activeBabyId))activeBabyId=babies[0].id;
+  saveBabies();
+  closeModal('baby-modal');
+  renderBabyBar();renderCalendar();updateStats();closeDetail();
+}
+
+// ============================================================
+//  分享 / 邀請協作
+//  說明：這是一份「獨立網頁檔案」（不是網站），save as HTML 後
+//  用 file:// 開啟時沒有共用網址，所以「分享連結」對其他媽媽完全
+//  無效（網址指向妳自己手機上的檔案路徑，她們的手機根本沒有這個檔
+//  案）。因此分享分成兩個務實的步驟：
+//   1. 把這份 .html 檔案本身傳給對方，她手機點開即可使用整個網頁
+//   2. 透過「匯出/匯入」文字字串，把標記為「共享協作」的寶寶資料
+//      傳給對方，讓雙方能記錄同一個寶寶（私人寶寶完全不會被匯出）
+// ============================================================
+function getSharedBabies(){
+  return babies.filter(b=>b.privacy==='shared');
+}
+function renderShareBabyList(){
+  const el=document.getElementById('share-baby-list');
+  if(!el)return;
+  el.innerHTML='';
+  if(babies.length===0){
+    el.innerHTML='<div style="font-size:.78rem;color:var(--text-soft)">尚未新增任何寶寶</div>';
+    return;
+  }
+  babies.forEach(b=>{
+    const item=document.createElement('div');
+    item.className='share-baby-item'+(b.privacy!=='shared'?' locked':'');
+    const tag = b.privacy==='shared'
+      ? '<span class="sb-tag tag-shared">👥 可邀請協作</span>'
+      : '<span class="sb-tag tag-private">🔒 私人不分享</span>';
+    item.innerHTML='<span class="sb-avatar">'+b.avatar+'</span><span class="sb-name">'+b.name+'</span>'+tag;
+    el.appendChild(item);
+  });
+}
+function exportData(){
+  const sharedOnly=getSharedBabies();
+  if(sharedOnly.length===0){
+    alert('目前沒有標記為「👥 共享協作」的寶寶喔！\n\n請先點寶寶名字旁的 ✏️ 編輯，將「資料類型」改為「共享協作」，才能邀請其他人一起編輯。');
+    return;
+  }
+  const data={babies:sharedOnly,v:3};
+  const json=JSON.stringify(data);
+  const b64=btoa(unescape(encodeURIComponent(json)));
+  navigator.clipboard.writeText(b64).then(()=>{
+    const ok=document.getElementById('copy-ok');
+    ok.classList.add('show');
+    setTimeout(()=>ok.classList.remove('show'),2500);
+  }).catch(()=>{
+    // Fallback: show in the import box so user can manually copy
+    const input=document.getElementById('import-data-input');
+    input.value=b64;
+    input.select();
+    try{document.execCommand('copy');}catch(e){}
+    alert('已將資料字串填入下方輸入框，請手動複製');
+  });
+}
+function importData(){
+  const input=document.getElementById('import-data-input');
+  const b64=input.value.trim();
+  if(!b64){alert('請先貼上要匯入的資料字串');return;}
+  try{
+    const json=decodeURIComponent(escape(atob(b64)));
+    const data=JSON.parse(json);
+    if(!data.babies||!Array.isArray(data.babies)||!data.babies.length){
+      alert('資料格式不正確，請確認複製完整');
+      return;
+    }
+    // 匯入的寶寶一律視為共享協作（保護機制，避免被誤標為私人造成混淆）
+    data.babies.forEach(b=>{ b.privacy='shared'; });
+    const mode=confirm('選擇匯入方式：\n\n按「確定」＝合併到目前清單（保留妳原本所有寶寶，包含私人寶寶完全不受影響）\n按「取消」＝只取代共享協作的寶寶');
+    if(mode){
+      data.babies.forEach(incoming=>{
+        const idx=babies.findIndex(b=>b.id===incoming.id);
+        if(idx>=0)babies[idx]=incoming; else babies.push(incoming);
+      });
+    } else {
+      const privateOnes=babies.filter(b=>b.privacy==='private');
+      babies=[...privateOnes,...data.babies];
+    }
+    activeBabyId=babies[0].id;
+    saveBabies();
+    renderBabyBar();renderCalendar();updateStats();closeDetail();
+    input.value='';
+    closeModal('share-modal');
+    alert('✅ 匯入成功！妳的私人寶寶資料完全不受影響。');
+  }catch(e){
+    alert('匯入失敗，請確認資料字串是否完整正確');
+  }
+}
+
+// ============================================================
+//  MODAL HELPERS
+// ============================================================
+function openModal(id){
+  document.getElementById(id).classList.add('open');
+  if(id==='share-modal'){
+    renderShareBabyList();
+  }
+}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+
+
+// ============================================================
+//  INIT
+// ============================================================
+function init(){
+  const now=new Date();
+  calYear=now.getFullYear();calMonth=now.getMonth();
+  document.getElementById('input-date').value=now.toISOString().split('T')[0];
+  renderBabyBar();
+  // Bind modal overlay close-on-backdrop-click
+  document.querySelectorAll('.modal-overlay').forEach(function(el){
+    el.addEventListener('click',function(e){if(e.target===el)el.classList.remove('open');});
+  });
+  renderChips();renderCalendar();updateStats();
+  renderSuppAges();renderSupp();
+  renderDevAges();renderDev();
+}
+// Pre-load voices (some browsers lazy-load)
+if(window.speechSynthesis){
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged=()=>window.speechSynthesis.getVoices();
+}
+init();
+</script>
+</body>
+</html>
